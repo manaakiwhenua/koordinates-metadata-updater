@@ -161,7 +161,18 @@ then publish the layers together as a pulish group.
 This work flow of creating a draft through to publishing is easy enough to
 follow in the source code of this project. 
 
+### Tests
+Unit tests are provided to test all methods not making requests via the Koordinates
+Python client
 
+Integration tests are provided to test all methods making requests via the
+Koordinates Python client
+
+Both these test can be ran by executing ~/lds-metadata/updater/tests/test.py
+
+Integration test require that the LDS_APIKEY envi var is set. 
+
+The tests are set to run weekly apart of part of CI via Travis.  
 
 ### Future Enhancements:
 This is so far an initial minimum viable product release.
