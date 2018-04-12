@@ -1,18 +1,18 @@
 language: python
 python:
-- '3.5'
-- '3.6'
+  - '3.5'
+  - '3.6'
 branches:
   only:
-  - development
+    - master
 install:
-- python3 setup.py install
-- pip install codecov
+  - python3 setup.py install
+  - pip install codecov
 script:
-- cd $TRAVIS_BUILD_DIR/tests
-- coverage3 run --source=metadata_updater tests.py
+  - cd $TRAVIS_BUILD_DIR/tests
+  - coverage3 run --source=metadata_updater tests.py
 after_success:
-- codecov
+  - codecov
 env:
   matrix:
-    secure: BeGLMZUUGVvNkLvnSQF39QNmEH8V1xJ4IiDd5b+hjp4TvaUE9d9omv3bsrEyAbwghpDUS6Af5R3XIjEAU2grWzOZB2wgSvDPGQ4ZqlvLY2c7b8PAkh0OQ2UdbYTqMgqAQHN/wh6IB92cf6ZEUxtpCLcO9V4V4CBKX6mNOWqSJHP7/jFilcqZSXqQN71VfmA7oNki41UIhw3ao+uEn0jGrQZpAkRDDiaBBg/UCsu77J33rODD1WPINoNgiIKjY1QfLj/N/2GDAdxJK/Qpn22swBBKfgdkoqXngylNG0dlv4OehwReveCI4fqg9HP+C0lulhF+Bv2X5/hnDLEkMP3l2Drb8MmBUAjFnNrepPEUdGCCIqGEKyHZcxDyj9kru/JIB0ppQ1j5Vqc5vTm55/mTA5wH8gZheMCqPsi7F+32yo9QmosCHU8p0fdyXfJXeZ7JplOdXW+pZ8WVJS9Bt7P06ow54ffdlXRYjN6Y+rw7kcCFrf68IIKQNt/5wzQaqJ8OVzpzI5ZIDdDX8SgKfK/2fcsUAk2by+uNNOInOrFYEefoiyvkoP2bVXNYdWJbyq6AK/BPI5Mkxw2uA0XsB/aNgluDnIGjlQH+qimmbmdQhnKd9Ds+hOau0LKZpnc9+pqXIMEhr6esY+6HKrtJLZrjBOOpfc/j8AX7gYJJ/sEC2h8=
+    secure: N55zGNrRCOTu/kQx6257la3XY+zfch+onflVKqrsalbR9vj4qnB4PyFNue71xFZijMVGJ7vn9hKBgkjUy8j936hSzdN2KmudjSr759CDtOtPNN/9sKE+d08s89o56C40vnRvCS8H0CrLI7R7zNRoeC67EW1XZlZPwp/eBSqUF5kPkxwmC7AilK6fDjI27gpjNhyt2EvhhA63eCYsP3KgBM5iBurq2C1QZcBC8nkfL+RtrrLDbii69bUAb3kcmOKpaxZ1JJi3FZ9MflAp2wV1Vvy355kgVNbEzkUEKwFIGhqiRsLfr9qQ3WRbGkZs9O27B4MdcafJ+599eXvB9t9/td7iWMvl+IbwQMzXQHfX2K0p2Kf1caQy844k66boRDf4pM/7oclTygpmqJ0bgn8VVoxT3yWPT9Zx2l9ziZPlrJLxydbr1K8tIHqTaKRRPI/2IB0gihTyzgDT40z8Yxti75Z+qCZhXd1GzmOUV2OFIGSEZa/R3GIUqGzS2S7zUHAUnWsOGCIbPEWlmDpXSC1KYv7eTBELy5DSaXW54sMbWN0PIyO/Ca5wMKp0hJyqiTinDb8cARr2GcFmAVQVF56nVOlI4a+MP7x+BDCUqqP49frXHAcxORD451MZiWhl03aIu3RjQcCxhaz5D3nwomlPmOy+f9OFImKsNzfJQs7PfSg=
