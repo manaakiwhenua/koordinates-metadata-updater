@@ -48,7 +48,7 @@ class ConfigReader():
             regex = re.compile(r'(\\|\/)(metadata_updater)$')
             cwd = regex.sub('', cwd)
             cwd = os.path.join(os.sep, cwd, 'metadata_updater', 'config.yaml')
-        
+
         #check config exists
         if not os.path.exists(cwd):
             raise FileNotFoundError('Can not find config file')
@@ -181,7 +181,7 @@ def delete_draft(layer, version):
     Delete a draft version 
     """
 
-    layer.delete_version(version)
+    response = layer.delete_version(version)
     logger.info('A draft already exists for {0}. This draft ' \
                 'was deleted and a new one created '.format(layer.id))
 
@@ -190,6 +190,7 @@ def get_draft(layer):
     If no draft exists, create one. 
     Else return the current draft. 
     """
+    
     global ERRORS
 
     if not draft_exists(layer):
@@ -208,10 +209,13 @@ def get_draft(layer):
             return None
         else:
             delete_draft(layer, draft.version)
+            draft = layer.create_draft_version()
+            return draft
     else:   #A draft exists but we know nothing of its state/ history
         delete_draft(layer, draft.version)
-    draft = layer.create_draft_version()
-    return draft
+        draft = layer.create_draft_version()
+        return draft
+    
 
 def draft_exists(layer):
     """
@@ -295,7 +299,7 @@ def iterate_all(client):
                 This process only handles tables/layers'.format(item.id, type(item)))
             except:
                 pass
-            
+
 def iterate_selective(layers): 
     """
     Iterate through user supplied (via config.yaml)
@@ -436,7 +440,7 @@ def main():
                                                                                layers_edited_count))
         except koordinates.exceptions.ServerError as e:
             logger.critical('Publishing failed with fail with {0}'.format(str(e)))
-            ERRORS += 1
+            ERRORS += 1 
         except koordinates.exceptions.BadRequest as e:
             logger.critical('Publishing failed with fail with {0}'.format(str(e)))
             ERRORS += 1

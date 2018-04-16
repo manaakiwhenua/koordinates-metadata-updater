@@ -3,7 +3,7 @@
 
 Connection:
   Api_key: peanutbutter
-  Domain: data.linz.govt.nz # eg data.linz.govt.nz
+  Domain: data.linz.govt.nz
 
 Text:
   Mapping:                               
