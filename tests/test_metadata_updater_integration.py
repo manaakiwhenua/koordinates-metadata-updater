@@ -110,7 +110,7 @@ class TestMetadataUpdaterUpdFile(unittest.TestCase):
         all = metadata_updater.iterate_all(client)
         self.assertIsInstance(all, types.GeneratorType)
         # The below results in v. slow tests
-        #self.assertTrue(len(list(all))>0)
+        self.assertTrue(len(list(all))>0)
 
     def test_add_to_pub_group(self):
         """

@@ -180,10 +180,17 @@ def delete_draft(layer, version):
     """
     Delete a draft version 
     """
+    global ERRORS
 
-    response = layer.delete_version(version)
-    logger.info('A draft already exists for {0}. This draft ' \
+    try:
+        layer.delete_version(version)
+        logger.info('A draft already exists for {0}. This draft ' \
                 'was deleted and a new one created '.format(layer.id))
+        return True
+    except koordinates.exceptions.ServerError as e:
+        logger.critical('{0}'.format(e))
+        ERRORS += 1
+        return False
 
 def get_draft(layer):
     """
@@ -208,11 +215,15 @@ def get_draft(layer):
                             'publish group. THIS HAS NOT BEEN UPDATED '.format(layer.id))
             return None
         else:
-            delete_draft(layer, draft.version)
+            del_draft = delete_draft(layer, draft.version)
+            if not del_draft:
+                return None
             draft = layer.create_draft_version()
             return draft
     else:   #A draft exists but we know nothing of its state/ history
-        delete_draft(layer, draft.version)
+        del_draft = delete_draft(layer, draft.version)
+        if not del_draft:
+            return None
         draft = layer.create_draft_version()
         return draft
     
