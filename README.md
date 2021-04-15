@@ -1,5 +1,4 @@
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://github.com/linz/lds-metadata-updater/LICENSE) 
-[![codecov](https://codecov.io/gh/linz/lds-metadata-updater/branch/master/graph/badge.svg)](https://codecov.io/gh/linz/lds-metadata-updater)
 [![GitHub Actions Status](https://github.com/linz/lds-metadata-updater/workflows/CI/badge.svg)](https://github.com/linz/lds-metadata-updater/actions)
 
 
