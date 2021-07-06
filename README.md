@@ -7,7 +7,7 @@
 
 This utility updates LINZ (as well as others') Data Service metadata
 
-For installation instructions see [INSTALL.md](INSTALL.md)
+For installation instructions see [INSTALL.md](metadata_updater/INSTALL.md)
 
 ## Simple Overview
 
