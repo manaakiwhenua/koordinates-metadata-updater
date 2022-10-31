@@ -33,8 +33,8 @@ class TestMetadataUpdaterUpdFile(unittest.TestCase):
         """
 
         return metadata_updater.get_client(
-            os.getenv('LDS_TEST_DOMAIN'),
-            os.getenv('LDS_TEST_API_KEY')
+            os.getenv('DOMAIN'),
+            os.getenv('API_KEY')
         )
 
     def test_get_client(self):
