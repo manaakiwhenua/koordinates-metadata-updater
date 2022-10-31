@@ -18,3 +18,9 @@ suite.addTests(loader.loadTestsFromModule(test_metadata_updater_integration))
 # initialize a runner, pass it the suite and run it
 runner = unittest.TextTestRunner(verbosity=3)
 result = runner.run(suite)
+
+# Return a useful exit code
+if result.wasSuccessful(): 
+    exit(0)
+else:
+    exit(1)
