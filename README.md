@@ -173,7 +173,7 @@ Both these test can be ran by executing ~/lds-metadata/updater/tests/test.py
 
 Integration test require that the LDS_APIKEY envi var is set. 
 
-The tests are set to run weekly apart of part of CI via Travis.  
+The tests are run with every pull request and also on push to `master`
 
 ### Future Enhancements:
 This is so far an initial minimum viable product release.
