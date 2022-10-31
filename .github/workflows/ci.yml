@@ -27,6 +27,8 @@ jobs:
     env:
       PG: 14
       APT: "apt-get -o Dpkg::Progress=0 -o Dpkg::Use-Pty=0"
+      API_KEY: $ {{ secrets.LDS_TEST_API_KEY }}
+      DOMAIN: $ {{ secrets.LDS_TEST_DOMAIN }}
     steps:
     - uses: actions/checkout@v3
     - name: Setup python
