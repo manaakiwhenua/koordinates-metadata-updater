@@ -54,7 +54,7 @@ class ConfigReader():
             raise FileNotFoundError('Can not find config file')
 
         with open(cwd, 'r') as f:
-            config = yaml.load(f)
+            config = yaml.safe_load(f)
 
         # CONNECTION
         if 'Connection' in config:
