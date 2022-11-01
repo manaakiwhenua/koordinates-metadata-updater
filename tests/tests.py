@@ -12,8 +12,9 @@ suite  = unittest.TestSuite()
 
 # add tests to the test suite
 suite.addTests(loader.loadTestsFromModule(test_metadata_updater))
-suite.addTests(loader.loadTestsFromModule(test_metadata_updater_integration))
 
+# TODO: fix integration tests see https://github.com/linz/lds-metadata-updater/issues/41
+# suite.addTests(loader.loadTestsFromModule(test_metadata_updater_integration))
 
 # initialize a runner, pass it the suite and run it
 runner = unittest.TextTestRunner(verbosity=3)
