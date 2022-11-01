@@ -32,7 +32,10 @@ class TestMetadataUpdaterUpdFile(unittest.TestCase):
         Returns koordinates api client instance
         """
 
-        return metadata_updater.get_client(self.config.domain, self.config.api_key)
+        return metadata_updater.get_client(
+            os.getenv('DOMAIN'),
+            os.getenv('API_KEY')
+        )
 
     def test_get_client(self):
         """
