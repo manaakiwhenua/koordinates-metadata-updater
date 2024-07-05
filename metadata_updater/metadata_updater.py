@@ -22,7 +22,11 @@ import logging
 import shutil
 import argparse
 import _locale
+
+from .utils.xml_to_excel import parse_xml_file, write_to_excel
+
 _locale._getdefaultlocale = (lambda *args: ['en_US', 'utf8'])
+
 
 # current solution for setup.py
 try: 
@@ -99,6 +103,11 @@ class ConfigReader():
                 '"True" or "False". Got:"{}" instead'.format(self.test_overwrite))
         else:
             raise SystemExit('CONFIG ERROR: No "Test" section')
+        
+        # IF SUMMARISE
+        if 'Summarise' in config:
+            self.summarise = config['Summarise']['Summarise_metadata']
+            
 
 def post_metadata(draft, file):
     """
@@ -133,6 +142,8 @@ def get_metadata(layer, dir, overwrite):
     Download the layers metadata file
     """
 
+    global ERRORS
+
     title = remove_illegal_chars(layer.title)
     file_destination = os.path.join(dir,'{0}_{1}_{2}.iso.xml'.format(layer.type,
                                                                                         layer.id, 
@@ -140,7 +151,13 @@ def get_metadata(layer, dir, overwrite):
 
     if overwrite:
         file_exists(file_destination)
+    
+    try: 
         layer.metadata.get_xml(file_destination)
+    except AttributeError as e:
+        logger.critical(f"Failed to get XML for layer with ID {layer.id}: {str(e)}")
+        ERRORS += 1
+        return None
     return file_destination
 
 def update_metadata(dest_file, mapping):
@@ -392,12 +409,15 @@ def main():
     # PUBLISHER
     publisher = koordinates.Publish()
 
+    #SUMMARISED DATA
+    xml_data = [] 
+
     if config.test_dry_run:
         logger.info('RUNNING IN TEST DRY RUN MODE')
 
     # ITERATE OVER LAYERS
     if config.layers in ('ALL', 'all', 'All'):
-        layer_ids = iterate_all(client, config)
+        layer_ids = iterate_all(client)
     else: 
         layer_ids = iterate_selective(config.layers)
 
@@ -419,6 +439,14 @@ def main():
 
         # GET METADATA
         file = get_metadata(layer, config.destination_dir, config.test_overwrite)
+        if not file: 
+            # Metadata does not exist for this entry - it has been logged as CRITICAL
+            continue
+
+        # IF SUMMARISE, STORE ORIGINAL METADATA 
+        if config.summarise:
+            data = parse_xml_file(file)
+            xml_data.append(data)
 
         # TEST IF SEARCH TEXT IN FILE (IN ORDER OF PRIORITY)
         text_found, backup_created = False, False
@@ -435,14 +463,22 @@ def main():
             logger.info('Dataset {0}: Skipping, no changes to be made'. format(layer_id))
             continue
 
+
+            
+
         if config.test_dry_run:
             # i.e Do not update data service metadata
             continue
 
         if set_metadata(layer, file, publisher):
             layers_edited_count +=1
-
-
+    
+    # SUMMARISE WRITE METADATA TO XML 
+    if config.summarise:
+        workbook_file = os.path.join(config.destination_dir, 'metadata_summary.xlsx')
+        write_to_excel(xml_data, workbook_file)
+        
+ 
     # PUBLISH
     if layers_edited_count > 0 and not config.test_dry_run:
         try:

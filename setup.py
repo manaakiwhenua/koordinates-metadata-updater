@@ -9,7 +9,7 @@ with open("requirements.txt") as f:
 
 setup(
     name="metadata_updater",
-    version="dev",
+    version="0.0.1",
     description="Edit Data Service metadata",
     author="splanzer",
     author_email="splanzer@linz.govt.nz",
