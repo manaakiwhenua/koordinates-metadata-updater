@@ -14,10 +14,15 @@ Text:
        search: the terrace              # The text to search for replacement.
                                         # !!! Must be in Python Reg Exp format!
        replace: The Road                # The the text to replace the search text
+       target_element: './/gmd:contact/gmd:CI_ResponsibleParty/gmd:individualName/gco:CharacterString' #
+                                        # The element you wish to target. if Null and search and replace
+                                        # is performed across then entire file.
        ignore_case: True                # True or False. If True, search text case is ignored 
+                                        # If proving a "target_element" The RegEx can be .*
     2: 
        search: Land Info New Zealand
        replace: Land Information Aoteroa
+       target_element: Null
        ignore_case: True
 
 Output:

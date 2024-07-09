@@ -3,6 +3,10 @@ import xml.etree.ElementTree as ET
 import openpyxl
 
 def parse_xml_file(file_path):
+    """
+    Extract the metadata from the metadata xml document
+    """
+
     tree = ET.parse(file_path)
     root = tree.getroot()
     namespaces = {
@@ -65,25 +69,32 @@ def parse_xml_file(file_path):
     return data
 
 def write_to_excel(data_list, output_file):
+    """
+    Write a metadata summary to an excel Workbook
+    """
+
     workbook = openpyxl.Workbook()
     sheet = workbook.active
 
     headers = [
-        'Language', 'Hierarchy Level', 'Hierarchy Level Name', 'Individual Name', 'Organisation Name',
+        '__layer_id' , 'Language', 'Hierarchy Level', 'Hierarchy Level Name', 'Individual Name', 'Organisation Name',
         'Position Name', 'Phone', 'Email', 'Address', 'City', 'Postal Code', 'Country', 'Abstract',
         'Title', 'Purpose', 'Credit', 'Status', 'Date Stamp', 'Metadata Standard Name',
         'Metadata Standard Version', 'Environment Description', 'Topology Level', 'Geometric Object Type',
         'Geometric Object Count', 'Reference System Code', 'Reference System Code Space', 'Reference System Version',
         'Keyword', 'Use Limitation', 'Spatial Representation Type', 'Distance', 'Character Set',
         'Topic Category', 'Extent Type Code', 'West Bound Longitude', 'East Bound Longitude', 'South Bound Latitude',
-        'North Bound Latitude', 'Distribution Format Name', 'Distribution Format Version', 'Transfer Size',
-        'Lineage Statement'
+        'North Bound Latitude', 'Distribution Format Name', 'Distribution Format Version', 'Transfer Size', 
+        'Lineage Statement', '__license_type', '__license_url', '__num_downloads', '__first_published_at'
     ]
+
+
 
     sheet.append(headers)
 
     for data in data_list:
         row = [
+            data['__layer_id'],
             data['language'],
             data['hierarchyLevel'],
             data['hierarchyLevelName'],
@@ -125,93 +136,34 @@ def write_to_excel(data_list, output_file):
             data['distributionFormatName'],
             data['distributionFormatVersion'],
             data['transferSize'],
-            data['lineageStatement']
+            data['lineageStatement'],
+            data['__license_type'],
+            data['__license_url'],
+            data['__num_downloads'] ,
+            data['__first_published_at']
+
         ]
         sheet.append(row)
 
     workbook.save(output_file)
-# import os
-# import xml.etree.ElementTree as ET
-# import openpyxl
 
-# def parse_xml_file(file_path):
-#     tree = ET.parse(file_path)
-#     root = tree.getroot()
-#     namespaces = {
-#         'gmd': 'http://www.isotc211.org/2005/gmd',
-#         'gco': 'http://www.isotc211.org/2005/gco',
-#         'srv': 'http://www.isotc211.org/2005/srv',
-#         'gml': 'http://www.opengis.net/gml',
-#         'xlink': 'http://www.w3.org/1999/xlink'
-#     }
 
-#     def get_text(element, path):
-#         found = root.find(path, namespaces)
-#         return found.text if found is not None else ''
+def record_missing_metadata(data, missing_metadata_file):
+    """
+    Record information in a spread sheet for any layers found
+    that have not metadata attached
+    """
+    headers = ["layer_id", "layer_title", "layer_url", "__license_type", "__license_url"]
 
-#     data = {
-#         'language': get_text(root, './/gmd:LanguageCode'),
-#         'hierarchyLevel': get_text(root, './/gmd:MD_ScopeCode'),
-#         'hierarchyLevelName': get_text(root, './/gmd:hierarchyLevelName/gco:CharacterString'),
-#         'individualName': get_text(root, './/gmd:CI_ResponsibleParty/gmd:individualName/gco:CharacterString'),
-#         'organisationName': get_text(root, './/gmd:CI_ResponsibleParty/gmd:organisationName/gco:CharacterString'),
-#         'positionName': get_text(root, './/gmd:CI_ResponsibleParty/gmd:positionName/gco:CharacterString'),
-#         'phone': get_text(root, './/gmd:CI_Telephone/gmd:voice/gco:CharacterString'),
-#         'email': get_text(root, './/gmd:CI_Address/gmd:electronicMailAddress/gco:CharacterString'),
-#         'address': get_text(root, './/gmd:CI_Address/gmd:deliveryPoint/gco:CharacterString'),
-#         'city': get_text(root, './/gmd:CI_Address/gmd:city/gco:CharacterString'),
-#         'postalCode': get_text(root, './/gmd:CI_Address/gmd:postalCode/gco:CharacterString'),
-#         'country': get_text(root, './/gmd:CI_Address/gmd:country'),
-#         'abstract': get_text(root, './/gmd:abstract/gco:CharacterString'),
-#         'title': get_text(root, './/gmd:title/gco:CharacterString'),
-#         'purpose': get_text(root, './/gmd:purpose/gco:CharacterString'),
-#         'credit': get_text(root, './/gmd:credit/gco:CharacterString'),
-#         'status': get_text(root, './/gmd:status/gmd:MD_ProgressCode'),
-#         'dateStamp': get_text(root, './/gmd:dateStamp/gco:Date'),
-#         'metadataStandardName': get_text(root, './/gmd:metadataStandardName/gco:CharacterString'),
-#         'metadataStandardVersion': get_text(root, './/gmd:metadataStandardVersion/gco:CharacterString'),
-#         'environmentDescription': get_text(root, './/gmd:environmentDescription/gco:CharacterString'),
-#     }
+    try:
+        workbook = openpyxl.Workbook()
+        sheet = workbook.active
+        sheet.append(headers)  # Add header
 
-#     return data
-
-# def write_to_excel(data_list, output_file):
-#     workbook = openpyxl.Workbook()
-#     sheet = workbook.active
-
-#     headers = [
-#         'Language', 'Hierarchy Level', 'Hierarchy Level Name', 'Individual Name', 'Organisation Name',
-#         'Position Name', 'Phone', 'Email', 'Address', 'City', 'Postal Code', 'Country', 'Abstract',
-#         'Title', 'Purpose', 'Credit', 'Status', 'Date Stamp', 'Metadata Standard Name',
-#         'Metadata Standard Version', 'Environment Description'
-#     ]
-
-#     sheet.append(headers)
-
-#     for data in data_list:
-#         row = [
-#             data['language'],
-#             data['hierarchyLevel'],
-#             data['hierarchyLevelName'],
-#             data['individualName'],
-#             data['organisationName'],
-#             data['positionName'],
-#             data['phone'],
-#             data['email'],
-#             data['address'],
-#             data['city'],
-#             data['postalCode'],
-#             data['country'],
-#             data['abstract'],
-#             data['title'],
-#             data['purpose'],
-#             data['credit'],
-#             data['status'],
-#             data['dateStamp'],
-#             data['metadataStandardName'],
-#             data['metadataStandardVersion'],
-#             data['environmentDescription']
-#         ]
-#         sheet.append(row)
-
-#     workbook.save(output_file)
+        for entry in data:
+            row = [entry.get(header) for header in headers]
+            sheet.append(row)
+        
+        workbook.save(missing_metadata_file)
+    except Exception as e:
+        print(f"Failed to write to Excel: {e}")
