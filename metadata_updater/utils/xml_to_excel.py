@@ -85,7 +85,7 @@ def write_to_excel(data_list, output_file):
         'Keyword', 'Use Limitation', 'Spatial Representation Type', 'Distance', 'Character Set',
         'Topic Category', 'Extent Type Code', 'West Bound Longitude', 'East Bound Longitude', 'South Bound Latitude',
         'North Bound Latitude', 'Distribution Format Name', 'Distribution Format Version', 'Transfer Size', 
-        'Lineage Statement', '__license_type', '__license_url', '__num_downloads', '__first_published_at'
+        'Lineage Statement', '__license_type', '__license_url', '__num_downloads', '__first_published_at', '__is_public'
     ]
 
 
@@ -140,8 +140,8 @@ def write_to_excel(data_list, output_file):
             data['__license_type'],
             data['__license_url'],
             data['__num_downloads'] ,
-            data['__first_published_at']
-
+            data['__first_published_at'],
+            str(data['__is_public'])
         ]
         sheet.append(row)
 
@@ -153,7 +153,7 @@ def record_missing_metadata(data, missing_metadata_file):
     Record information in a spread sheet for any layers found
     that have not metadata attached
     """
-    headers = ["layer_id", "layer_title", "layer_url", "__license_type", "__license_url"]
+    headers = ["layer_id", "layer_title", "layer_url", "__license_type", "__license_url", "__is_public"]
 
     try:
         workbook = openpyxl.Workbook()

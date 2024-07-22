@@ -4,7 +4,8 @@
 
 Connection:
   Api_key: <ADMIN API KEY>             # Not Recommended. Should be stored as envi var
-  Domain:  <Data Service Domain>       # e.g. data.linz.govt.nz
+  Domain:  <Data Service Domain>       # e.g.lris.scinfo.org.nz (do not include www. see 
+                                      # https://github.com/koordinates/python-client/issues/52)
 
 Text:
   Mapping:                               
@@ -45,4 +46,7 @@ Test:
                                         # Useful dev and testing. When True
                                         # metadata files that are already in 
                                         # the destination dir will be over-written
-                                        
+Summarise:                              
+  Summarise_metadata: True              # Summarise the metadata to a excel sheet. 
+                                        # Most commonly used with dry run to get a high level
+                                        # view of the metadata                            

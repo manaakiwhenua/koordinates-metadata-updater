@@ -1,11 +1,10 @@
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://github.com/linz/lds-metadata-updater/LICENSE) 
-[![GitHub Actions Status](https://github.com/linz/lds-metadata-updater/workflows/CI/badge.svg)](https://github.com/linz/lds-metadata-updater/actions)
 
 
-# lds-metadata-updater
+# Koordinates-metadata-updater
 
 
-This utility updates LINZ (as well as others') Data Service metadata
+This utility updates metadata on koordiantes platforms. 
 
 For installation instructions see [INSTALL.md](metadata_updater/INSTALL.md)
 
@@ -13,9 +12,9 @@ For installation instructions see [INSTALL.md](metadata_updater/INSTALL.md)
 
 1. Downloads the xml metadata from the Data Service, for one or many user defined
 data sources
-2. Takes a back up of the metadaat file (if text replacement is to be made)
+2. Takes a back-up of the metadata file (if text replacement is to be made)
 3. Finds and replaces text within the metadata file 
-4. Updates the LDS metadata with the newly edited XML.
+4. Updates the metadata with the newly edited XML.
 
 
 ## Execute Metadata Update
@@ -39,6 +38,9 @@ Text:
                                         # ENUSRE NUMBERING IS SEQUENTIAL STARTING AT 1 !!!
        search: the terrace              # The text to search for replacement
                                         # !!! FORMAT: Python Regular Expression
+        target_element: './/gmd:contact/gmd:CI_ResponsibleParty/gmd:individualName/gco:CharacterString' #
+                                        # The element you wish to target. if Null and search and replace
+                                        # is performed across then entire file.
        replace: The Road                # The text that is to replace the search text
        ignore_case: True                # True or False. If True, search text case is ignored 
     2: 
@@ -70,13 +72,15 @@ Test:
 ```
 **Text Mapping**
 
-The order that text is searched and replaced is import. For this reason the 
+The order that text is searched and replaced is important. For this reason the 
 mappings must be formatted as above. That is, each mapping must be sequentially 
 number, starting at 1, in the order the search and replace is to be executed.
 
 The script uses [re.sub](https://docs.python.org/2/library/re.html#regular-expression-syntax). 
 The search text format must therefore be in the Python Regular Expression format.
 Replace text is a standard plain text string that is to replace the regular expression match. 
+
+If `target_element` the edits for the mapping are only made against the referenced XML element.  
 
 **API Key**
 

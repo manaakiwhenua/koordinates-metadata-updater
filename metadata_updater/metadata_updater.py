@@ -127,11 +127,11 @@ def post_metadata(draft, file):
 
     try:
         xml = open(file).read()
-        draft.set_metadata(xml.encode('utf-8'), version_id=draft.id)
+        draft.set_metadata(xml.encode('utf-8'), version_id=draft.version.id)
         return True
     except koordinates.exceptions.ServerError as e:
         ERRORS += 1
-        logger.critical('metadata update for {0} fail with {1}'.format(draft.id,
+        logger.critical('metadata update for {0} fail with {1}'.format(draft.version.id,
                                                                         str(e)))
         return False
 
@@ -298,12 +298,11 @@ def draft_exists(layer):
     a draft version therefore already exists 
     """
 
-    current_ver = str(layer.version.id)
-    #latest_ver = layer.latest_version # Defunct?
-    latest_ver = str(layer.get_published_version().version)
-    #m = re.search('versions\/([0-9]*)\/', latest_ver)
-    #latest_ver = m.group(1)
-    if latest_ver == current_ver:
+    published_ver = str(layer.version.id)
+    latest_ver = layer.latest_version
+    m = re.search('versions\/([0-9]*)\/', latest_ver)
+    latest_ver = m.group(1)
+    if latest_ver == published_ver:
         return False
     return True
 
@@ -513,7 +512,8 @@ def main():
                                      'layer_title': layer.title, 
                                      'layer_url': layer.url,
                                       '__license_type': layer.license.type if layer.license and layer.license.type else None,
-                                      '__license_url':layer.license.url if layer.license and layer.license.url else None })
+                                      '__license_url': layer.license.url if layer.license and layer.license.url else None, 
+                                      '__is_public': 'True' if layer.public_access is not None else 'False'})
             continue
 
         # IF SUMMARISE, STORE ORIGINAL METADATA 
@@ -525,6 +525,7 @@ def main():
             data['__license_url'] =layer.license.url if layer.license and layer.license.url else None
             data['__num_downloads'] =layer.num_downloads
             data['__first_published_at'] =layer.first_published_at.strftime('%Y-%m-%d')
+            data['__is_public'] = True if layer.public_access is not None else False
 
             xml_data.append(data)
 
