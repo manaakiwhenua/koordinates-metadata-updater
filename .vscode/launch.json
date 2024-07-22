@@ -10,7 +10,7 @@
             "request": "launch",
             "module": "metadata_updater.metadata_updater", // This is the module name
             "console": "integratedTerminal",
-            "justMyCode": true,
+            "justMyCode": false,
             "args": [
                 "--config_file",
                 "/home/planzers/git/koordinates-metadata-updater/metadata_updater/config.yaml"

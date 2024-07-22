@@ -22,8 +22,9 @@ import logging
 import shutil
 import argparse
 import _locale
+from lxml import etree as ET
 
-from .utils.xml_to_excel import parse_xml_file, write_to_excel
+from .utils.xml_to_excel import parse_xml_file, write_to_excel, record_missing_metadata
 
 _locale._getdefaultlocale = (lambda *args: ['en_US', 'utf8'])
 
@@ -36,6 +37,13 @@ except:
     
 logger = logging.getLogger(__name__)
 ERRORS = 0
+NAMESPACES = {
+    'gmd': 'http://www.isotc211.org/2005/gmd',
+    'gco': 'http://www.isotc211.org/2005/gco',
+    'srv': 'http://www.isotc211.org/2005/srv',
+    'gml': 'http://www.opengis.net/gml',
+    'xlink': 'http://www.w3.org/1999/xlink'
+}
 
 class ConfigReader():
     """
@@ -119,11 +127,11 @@ def post_metadata(draft, file):
 
     try:
         xml = open(file).read()
-        draft.set_metadata(xml.encode('utf-8'))
+        draft.set_metadata(xml.encode('utf-8'), version_id=draft.version.id)
         return True
     except koordinates.exceptions.ServerError as e:
         ERRORS += 1
-        logger.critical('metadata update for {0} fail with {1}'.format(draft.id,
+        logger.critical('metadata update for {0} fail with {1}'.format(draft.version.id,
                                                                         str(e)))
         return False
 
@@ -160,20 +168,58 @@ def get_metadata(layer, dir, overwrite):
         return None
     return file_destination
 
+
 def update_metadata(dest_file, mapping):
     """
-    Using the config text mapping, find and 
-    replace text in the metadata file.
-    Note. back up taken of the original file
-    """
+    Update the metadata file. If target_element is not None in the
+    config it will do this only targeting said XML element. Else, 
+    a regex find and replace will be performed across the entire file.
 
-    with fileinput.FileInput(dest_file, inplace=True) as file:
-        for line in file:
-            if mapping['ignore_case']:
-                line = re.sub(mapping['search'], mapping['replace'], line.rstrip(), flags=re.IGNORECASE)
-            else: 
-                line = re.sub(mapping['search'], mapping['replace'], line.rstrip())
-            print(line)
+    Note, if using target_element regex ".*" can be used to replace
+    all values of an xml element. It is not safe to use this for the
+    when not using target_element and targeting the entire file
+    """
+    tree = ET.parse(dest_file)
+    root = tree.getroot()
+    
+    # Extract namespaces and create a namespace dictionary
+    namespaces = {node[0]: node[1] for _, node in ET.iterparse(dest_file, events=['start-ns'])}
+    target_element = mapping.get('target_element')
+    search_text = mapping['search']
+    replace_text = mapping['replace']
+    ignore_case = mapping['ignore_case']
+
+    if file_has_text(search_text, ignore_case, dest_file, target_element):
+        if target_element:
+            # Target specific elements in the XML
+            elements = root.findall(target_element, namespaces)
+            for element in elements:
+                if element is not None and element.text:
+                    if ignore_case:
+                        search_pattern = re.compile(search_text, flags=re.IGNORECASE | re.DOTALL)
+                    else:
+                        search_pattern = re.compile(search_text, flags=re.DOTALL)
+                    
+                    # Ensure replacement is done only once
+                    element.text = re.sub(search_pattern, replace_text, element.text, count=1)
+        else:
+            # Perform a generic find and replace
+            with fileinput.FileInput(dest_file, inplace=True) as file:
+                for line in file:
+                    if ignore_case:
+                        line = re.sub(search_text, replace_text, line.rstrip(), flags=re.IGNORECASE)
+                    else:
+                        line = re.sub(search_text, replace_text, line.rstrip())
+                    print(line)
+            return
+
+    # Register namespaces to ensure correct prefixes
+    for prefix, uri in namespaces.items():
+        if prefix:  # Skip empty prefixes
+            ET.register_namespace(prefix, uri)
+
+    tree.write(dest_file, encoding='utf-8', xml_declaration=True, pretty_print=True)
+
 
 def set_metadata(layer, file, publisher):
     """
@@ -252,11 +298,11 @@ def draft_exists(layer):
     a draft version therefore already exists 
     """
 
-    current_ver = str(layer.version.id)
+    published_ver = str(layer.version.id)
     latest_ver = layer.latest_version
     m = re.search('versions\/([0-9]*)\/', latest_ver)
     latest_ver = m.group(1)
-    if latest_ver == current_ver:
+    if latest_ver == published_ver:
         return False
     return True
 
@@ -344,15 +390,34 @@ def file_has_text(search_text, ignore_case, file):
     if there are no changes to be made.
     """
 
-    with open(file, 'r') as f:
-        for line in f:
-            if ignore_case:
-                match = re.search(search_text, line, flags=re.IGNORECASE)
-            else:
-                match = re.search(search_text, line)
-            if match:
+def file_has_text(search_text, ignore_case, file, target_element=None):
+    """
+    Test for the search text in the file or within a specified XML element.
+    Because there is no point updating and posting a file
+    if there are no changes to be made.
+    """
+
+    if target_element:
+        # Parse the XML file
+        tree = ET.parse(file)
+        root = tree.getroot()
+        element = root.find(target_element, NAMESPACES)
+        if element is not None and element.text:
+            flags = re.IGNORECASE if ignore_case else 0
+            if re.search(search_text, element.text, flags=flags):
                 return True
         return False
+    else:
+        # Generic text search in the file
+        with open(file, 'r') as f:
+            for line in f:
+                if ignore_case:
+                    match = re.search(search_text, line, flags=re.IGNORECASE)
+                else:
+                    match = re.search(search_text, line)
+                if match:
+                    return True
+            return False
 
 def create_backup(file, overwrite=False):
     """
@@ -369,6 +434,7 @@ def get_client(domain, api_key):
     """
     
     return koordinates.Client(domain, api_key)
+
 
 def parse_args(args):
     cli_parser = argparse.ArgumentParser()
@@ -411,6 +477,7 @@ def main():
 
     #SUMMARISED DATA
     xml_data = [] 
+    missing_metadata = []
 
     if config.test_dry_run:
         logger.info('RUNNING IN TEST DRY RUN MODE')
@@ -439,19 +506,33 @@ def main():
 
         # GET METADATA
         file = get_metadata(layer, config.destination_dir, config.test_overwrite)
-        if not file: 
+        if not file:
             # Metadata does not exist for this entry - it has been logged as CRITICAL
+            missing_metadata.append({'layer_id': layer.id, 
+                                     'layer_title': layer.title, 
+                                     'layer_url': layer.url,
+                                      '__license_type': layer.license.type if layer.license and layer.license.type else None,
+                                      '__license_url': layer.license.url if layer.license and layer.license.url else None, 
+                                      '__is_public': 'True' if layer.public_access is not None else 'False'})
             continue
 
         # IF SUMMARISE, STORE ORIGINAL METADATA 
         if config.summarise:
             data = parse_xml_file(file)
+            # Adding a few non-metadata fields to the summary
+            data['__layer_id'] = layer_id
+            data['__license_type'] = layer.license.type if layer.license and layer.license.type else None
+            data['__license_url'] =layer.license.url if layer.license and layer.license.url else None
+            data['__num_downloads'] =layer.num_downloads
+            data['__first_published_at'] =layer.first_published_at.strftime('%Y-%m-%d')
+            data['__is_public'] = True if layer.public_access is not None else False
+
             xml_data.append(data)
 
         # TEST IF SEARCH TEXT IN FILE (IN ORDER OF PRIORITY)
         text_found, backup_created = False, False
         for i in range(1,len(mapping)+1):
-            if file_has_text(mapping[i]['search'], mapping[i]['ignore_case'], file):
+            if file_has_text(mapping[i]['search'], mapping[i]['ignore_case'], file, mapping[i]['target_element']):
                 text_found = True
                 # Only creating a backup if the original is edited 
                 if not backup_created:
@@ -477,6 +558,10 @@ def main():
     if config.summarise:
         workbook_file = os.path.join(config.destination_dir, 'metadata_summary.xlsx')
         write_to_excel(xml_data, workbook_file)
+
+        # Those entries with no metadata associated
+        missing_metadata_file =os.path.join(config.destination_dir, 'layers_missing_metadata.xlsx')
+        record_missing_metadata(missing_metadata, missing_metadata_file)
         
  
     # PUBLISH
