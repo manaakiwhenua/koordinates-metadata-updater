@@ -1,0 +1,589 @@
+---
+
+
+Connection:
+  Api_key: <API KEY>           # Not Recommended. Should be stored as envi var
+  Domain:  lris.scinfo.org.nz                          # e.g. lris.scinfo.org.nz
+
+Text:
+  Mapping:                               
+    1:                                  # The order the text replacements are to occur
+                                       # DONT NOT DUPLICATE NUMBERS. !!!
+                                       # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+      search: '<gmd:useLimitation>([^<]+)</gmd:useLimitation>'                     # The text to search for replacement.
+                                       # !!! Must be in Python Reg Exp format!
+                                       # If proving a "target_element" The RegEx can be .*
+      replace: '<gmd:useLimitation>\n\t\t\t\t<gco:CharacterString>\\1</gco:CharacterString>\n</gmd:useLimitation>'             # The the text to replace the search text
+      target_element: Null #'.//gmd:contact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:country/gco:CharacterString'
+      ignore_case: False                # True or False. If True, search text case is ignored 
+    ###############################
+    ## CI_ResponsibleParty
+    ###############################
+    2:                                  # The order the text replacements are to occur
+                                       # DONT NOT DUPLICATE NUMBERS. !!!
+                                       # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+      search: '^(?!lris@landcareresearch\.co\.nz$).+'                     # The text to search for replacement.
+                                       # !!! Must be in Python Reg Exp format!
+                                       # If proving a "target_element" The RegEx can be .*   +64 6 353 4953
+      replace: 'lris@landcareresearch.co.nz' # The the text to replace the search text
+      target_element:  './gmd:contact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:electronicMailAddress/gco:CharacterString'
+      ignore_case: False                # True or False. If True, search text case is ignored 
+    3:                                  # The order the text replacements are to occur
+                                       # DONT NOT DUPLICATE NUMBERS. !!!
+                                       # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+      search: '^(?!Lincoln$).+'                     # The text to search for replacement.
+                                       # !!! Must be in Python Reg Exp format!
+                                       # If proving a "target_element" The RegEx can be .*   +64 6 353 4953
+      replace: 'Lincoln' # The the text to replace the search text
+      target_element:  './gmd:contact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:city/gco:CharacterString'
+      ignore_case: False                # True or False. If True, search text case is ignored 
+    4:                                  # The order the text replacements are to occur
+                                       # DONT NOT DUPLICATE NUMBERS. !!!
+                                       # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+      search: '^(?!Canterbury$).+'                     # The text to search for replacement.
+                                       # !!! Must be in Python Reg Exp format!
+                                       # If proving a "target_element" The RegEx can be .*   +64 6 353 4953
+      replace: 'Canterbury' # The the text to replace the search text
+      target_element:  './gmd:contact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:administrativeArea/gco:CharacterString'
+      ignore_case: False  
+    5:                                  # The order the text replacements are to occur
+                                       # DONT NOT DUPLICATE NUMBERS. !!!
+                                       # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+      search: '^(?!7640$).+'                     # The text to search for replacement.
+                                       # !!! Must be in Python Reg Exp format!
+                                       # If proving a "target_element" The RegEx can be .*   +64 6 353 4953
+      replace: '7640' # The the text to replace the search text
+      target_element:  './gmd:contact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:postalCode/gco:CharacterString'
+      ignore_case: False                # True or False. If True, search text case is ignored 
+    6:                                  # The order the text replacements are to occur
+                                       # DONT NOT DUPLICATE NUMBERS. !!!
+                                       # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+      search: 'NZ|\.N\.Z|New Zealand'
+      
+                       # The text to search for replacement.
+                                       # !!! Must be in Python Reg Exp format!
+                                       # If proving a "target_element" The RegEx can be .*
+      replace: Null #'^(?!\+64\s6\s353\s4953$).+'#'<gmd:Country codeList="http://www.iso.org/iso/country_codes/iso_3166_code_lists.htm" codeSpace="ISO3166-1" codeListValue="NZ">NZ</gmd:Country>'          # The the text to replace the search text
+      target_element: './gmd:contact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:country/gco:CharacterString'
+      ignore_case: True
+      create_if_not_exists: False
+      replace_entry: True # Target must be set
+      name_space:  'gmd'
+      code_list: "http://www.iso.org/iso/country_codes/iso_3166_code_lists.html"   
+      code_space: "ISO3166-1"
+      code_list_value: "NZ"
+      new_tag: 'gmd:Country'    #5:                                  # The order the text replacements are to occur
+      #                                  # DONT NOT DUPLICATE NUMBERS. !!!
+      #                                  # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+      # search: '^(?!pointOfContact$).+'                     # The text to search for replacement.
+      #                                  # !!! Must be in Python Reg Exp format!
+      #                                  # If proving a "target_element" The RegEx can be .*   +64 6 353 4953
+      # replace: 'pointOfContact' # The the text to replace the search text
+      # target_element:  './gmd:contact/gmd:CI_ResponsibleParty/gmd:role/gmd:CI_RoleCode'
+      # ignore_case: False  
+      
+      # TEMP
+    # 6:                                  # The order the text replacements are to occur
+    #                                   # DONT NOT DUPLICATE NUMBERS. !!!
+    #                                   # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+    #   search: 'dsdsdsds8d90s8d0s9d9sd8sd980-s8ds8d8sdfcdfddf#@#@#@d'                     # The text to search for replacement.
+    #                                     # !!! Must be in Python Reg Exp format!
+    #                                     # If proving a "target_element" The RegEx can be .*   +64 6 353 4953
+    #   replace: 'pointOfContact' # The the text to replace the search text
+    #   target_element:  './gmd:contact/gmd:CI_ResponsibleParty/gmd:role/gmd:CI_RoleCode'
+    #   ignore_case: False  
+    7:                                  # The order the text replacements are to occur
+                                       # DONT NOT DUPLICATE NUMBERS. !!!
+                                       # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+      search: '^(?!\+64\s6\s353\s4953$).+'                     # The text to search for replacement.
+                                       # !!! Must be in Python Reg Exp format!
+                                       # If proving a "target_element" The RegEx can be .*   +64 6 353 4953
+      replace: '+64 6 353 4953' # The the text to replace the search text
+      target_element:  './gmd:contact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:phone/gmd:CI_Telephone/gmd:voice/gco:CharacterString'  #'.//gmd:contact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:country/gco:CharacterString'
+      ignore_case: False 
+    8:                                  # The order the text replacements are to occur
+                                       # DONT NOT DUPLICATE NUMBERS. !!!
+                                       # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+      search: '^(?!Omit$).+'                     # The text to search for replacement.
+                                       # !!! Must be in Python Reg Exp format!
+                                       # If proving a "target_element" The RegEx can be .*   +64 6 353 4953
+      replace: 'Omit' # The the text to replace the search text
+      target_element:  './gmd:contact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:phone/gmd:CI_Telephone/gmd:facsimile/gco:CharacterString' 
+      ignore_case: False 
+    9:                                  # The order the text replacements are to occur
+                                       # DONT NOT DUPLICATE NUMBERS. !!!
+                                       # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+      search: '^(?!PO\sBox\s69040\,\sLincoln\s7640$).+'                     # The text to search for replacement.
+                                       # !!! Must be in Python Reg Exp format!
+                                       # If proving a "target_element" The RegEx can be .*   +64 6 353 4953
+      replace: 'PO Box 69040, Lincoln 7640' # The the text to replace the search text
+      target_element:  './gmd:contact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:deliveryPoint/gco:CharacterString'
+      ignore_case: False                                
+    10:                                  # The order the text replacements are to occur
+                                       # DONT NOT DUPLICATE NUMBERS. !!!
+                                       # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+      search: '^(?!Landcare Research NZ Ltd$).+'                    # The text to search for replacement.
+                                       # !!! Must be in Python Reg Exp format!
+                                       # If proving a "target_element" The RegEx can be .*
+      replace: 'Landcare Research NZ Ltd'             # The the text to replace the search text
+      target_element: './gmd:contact/gmd:CI_ResponsibleParty/gmd:organisationName/gco:CharacterString' #'.//gmd:contact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:country/gco:CharacterString'
+      ignore_case: False    
+    11:                                  # The order the text replacements are to occur
+                                       # DONT NOT DUPLICATE NUMBERS. !!!
+                                       # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+      search: '^(?!Omit$).+'                    # The text to search for replacement.
+                                       # !!! Must be in Python Reg Exp format!
+                                       # If proving a "target_element" The RegEx can be .*
+      replace: 'Omit'             # The the text to replace the search text
+      target_element: './gmd:contact/gmd:CI_ResponsibleParty/gmd:individualName/gco:CharacterString'
+      ignore_case: False    
+    12:                                  # The order the text replacements are to occur
+                                       # DONT NOT DUPLICATE NUMBERS. !!!
+                                       # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+      search: '^(?!Omit$).+'                    # The text to search for replacement.
+                                       # !!! Must be in Python Reg Exp format!
+                                       # If proving a "target_element" The RegEx can be .*
+      replace: 'Omit'             # The the text to replace the search text
+      target_element: './gmd:contact/gmd:CI_ResponsibleParty/gmd:positionName/gco:CharacterString'
+      ignore_case: False  
+
+
+    ###############################
+    ## Distributor Contact
+    ###############################
+    # Email
+    13:                                  # The order the text replacements are to occur
+                                       # DONT NOT DUPLICATE NUMBERS. !!!
+                                       # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+      search: '^(?!lris@landcareresearch\.co\.nz$).+'                     # The text to search for replacement.
+                                       # !!! Must be in Python Reg Exp format!
+                                       # If proving a "target_element" The RegEx can be .*   +64 6 353 4953
+      replace: 'lris@landcareresearch.co.nz' # The the text to replace the search text
+      target_element:  './gmd:distributionInfo/gmd:MD_Distribution/gmd:distributor/gmd:MD_Distributor/gmd:distributorContact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:electronicMailAddress/gco:CharacterString'
+      ignore_case: False                # True or False. If True, search text case is ignored 
+    # City
+    14:                                  # The order the text replacements are to occur
+                                       # DONT NOT DUPLICATE NUMBERS. !!!
+                                       # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+      search: '^(?!Lincoln$).+'                     # The text to search for replacement.
+                                       # !!! Must be in Python Reg Exp format!
+                                       # If proving a "target_element" The RegEx can be .*   +64 6 353 4953
+      replace: 'Lincoln' # The the text to replace the search text
+      target_element:  './gmd:distributionInfo/gmd:MD_Distribution/gmd:distributor/gmd:MD_Distributor/gmd:distributorContact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:city/gco:CharacterString'
+      ignore_case: False                # True or False. If True, search text case is ignored 
+    15:                                  # The order the text replacements are to occur
+                                       # DONT NOT DUPLICATE NUMBERS. !!!
+                                       # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+      search: '^(?!Canterbury$).+'                     # The text to search for replacement.
+                                       # !!! Must be in Python Reg Exp format!
+                                       # If proving a "target_element" The RegEx can be .*   +64 6 353 4953
+      replace: 'Canterbury' # The the text to replace the search text
+      target_element:  './gmd:contact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:administrativeArea/gco:CharacterString'
+      ignore_case: False  
+    # Post Code    
+    16:                                  # The order the text replacements are to occur
+                                       # DONT NOT DUPLICATE NUMBERS. !!!
+                                       # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+      search: '^(?!7640$).+'                     # The text to search for replacement.
+                                       # !!! Must be in Python Reg Exp format!
+                                       # If proving a "target_element" The RegEx can be .*   +64 6 353 4953
+      replace: '7640' # The the text to replace the search text
+      target_element:  './gmd:distributionInfo/gmd:MD_Distribution/gmd:distributor/gmd:MD_Distributor/gmd:distributorContact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:postalCode/gco:CharacterString'
+      ignore_case: False                # True or False. If True, search text case is ignored 
+
+    17:                                  # The order the text replacements are to occur
+                                       # DONT NOT DUPLICATE NUMBERS. !!!
+                                       # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+      search: 'NZ|\.N\.Z|New Zealand'
+      
+                       # The text to search for replacement.
+                                       # !!! Must be in Python Reg Exp format!
+                                       # If proving a "target_element" The RegEx can be .*
+      replace: Null #'^(?!\+64\s6\s353\s4953$).+'#'<gmd:Country codeList="http://www.iso.org/iso/country_codes/iso_3166_code_lists.htm" codeSpace="ISO3166-1" codeListValue="NZ">NZ</gmd:Country>'          # The the text to replace the search text
+      target_element: './gmd:distributionInfo/gmd:MD_Distribution/gmd:distributor/gmd:MD_Distributor/gmd:distributorContact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:country/gco:CharacterString'
+      ignore_case: True
+      @action: overwrite_element
+      replace_entry: True # Target must be set
+      name_space:  'gmd'
+      code_list: "http://www.iso.org/iso/country_codes/iso_3166_code_lists.html"   
+      code_space: "ISO3166-1"
+      code_list_value: "NZ"
+      new_tag: 'gmd:Country'
+
+    # Role. come back to should be <gmd:CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeSpace="ISOTC211/19115" codeListValue="distributor">distributor</gmd:CI_RoleCode>
+    # 5:                                  # The order the text replacements are to occur
+    #                                     # DONT NOT DUPLICATE NUMBERS. !!!
+    #                                     # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+    #    search: '^(?!pointOfContact$).+'                     # The text to search for replacement.
+    #                                     # !!! Must be in Python Reg Exp format!
+    #                                     # If proving a "target_element" The RegEx can be .*   +64 6 353 4953
+    #    replace: 'pointOfContact' # The the text to replace the search text
+    #    target_element:  './gmd:contact/gmd:CI_ResponsibleParty/gmd:role/gmd:CI_RoleCode'
+    #    ignore_case: False  
+    
+    # Phone
+    18:                                  # The order the text replacements are to occur
+                                       # DONT NOT DUPLICATE NUMBERS. !!!
+                                       # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+      search: '^(?!\+64\s6\s353\s4953$).+'                     # The text to search for replacement.
+                                       # !!! Must be in Python Reg Exp format!
+                                       # If proving a "target_element" The RegEx can be .*   +64 6 353 4953
+      replace: '+64 6 353 4953' # The the text to replace the search text
+      target_element:  './gmd:distributionInfo/gmd:MD_Distribution/gmd:distributor/gmd:MD_Distributor/gmd:distributorContact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:phone/gmd:CI_Telephone/gmd:voice/gco:CharacterString'  #'.//gmd:contact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:country/gco:CharacterString'
+      ignore_case: False 
+    # Fax
+    19:                                  # The order the text replacements are to occur
+                                       # DONT NOT DUPLICATE NUMBERS. !!!
+                                       # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+      search: '^(?!Omit$).+'                     # The text to search for replacement.
+                                       # !!! Must be in Python Reg Exp format!
+                                       # If proving a "target_element" The RegEx can be .*   +64 6 353 4953
+      replace: 'Omit' # The the text to replace the search text
+      target_element:  './gmd:distributionInfo/gmd:MD_Distribution/gmd:distributor/gmd:MD_Distributor/gmd:distributorContact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:phone/gmd:CI_Telephone/gmd:facsimile/gco:CharacterString' 
+      ignore_case: False 
+    # Delivery Point
+    20:                                  # The order the text replacements are to occur
+                                       # DONT NOT DUPLICATE NUMBERS. !!!
+                                       # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+      search: '^(?!PO\sBox\s69040\,\sLincoln\s7640$).+'                     # The text to search for replacement.
+                                       # !!! Must be in Python Reg Exp format!
+                                       # If proving a "target_element" The RegEx can be .*   +64 6 353 4953
+      replace: 'PO Box 69040, Lincoln 7640' # The the text to replace the search text
+      target_element:  './gmd:distributionInfo/gmd:MD_Distribution/gmd:distributor/gmd:MD_Distributor/gmd:distributorContact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:deliveryPoint/gco:CharacterString'
+      ignore_case: False                                
+    # Org Name
+    21:                                  # The order the text replacements are to occur
+                                       # DONT NOT DUPLICATE NUMBERS. !!!
+                                       # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+      search: '^(?!Landcare Research NZ Ltd$).+'                    # The text to search for replacement.
+                                       # !!! Must be in Python Reg Exp format!
+                                       # If proving a "target_element" The RegEx can be .*
+      replace: 'Landcare Research NZ Ltd'             # The the text to replace the search text
+      target_element: './gmd:distributionInfo/gmd:MD_Distribution/gmd:distributor/gmd:MD_Distributor/gmd:distributorContact/gmd:CI_ResponsibleParty/gmd:organisationName/gco:CharacterString'
+      ignore_case: False    
+    # individualName
+    22:                                  # The order the text replacements are to occur
+                                       # DONT NOT DUPLICATE NUMBERS. !!!
+                                       # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+      search: '^(?!Omit$).+'                    # The text to search for replacement.
+                                       # !!! Must be in Python Reg Exp format!
+                                       # If proving a "target_element" The RegEx can be .*
+      replace: 'Omit'             # The the text to replace the search text
+      target_element: './gmd:distributionInfo/gmd:MD_Distribution/gmd:distributor/gmd:MD_Distributor/gmd:distributorContact/gmd:CI_ResponsibleParty/gmd:individualName/gco:CharacterString'
+      ignore_case: False    
+    # Position Name
+    23:                                  # The order the text replacements are to occur
+                                       # DONT NOT DUPLICATE NUMBERS. !!!
+                                       # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+      search: '^(?!Omit$).+'                    # The text to search for replacement.
+                                       # !!! Must be in Python Reg Exp format!
+                                       # If proving a "target_element" The RegEx can be .*
+      replace: 'Omit'             # The the text to replace the search text
+      target_element: './gmd:distributionInfo/gmd:MD_Distribution/gmd:distributor/gmd:MD_Distributor/gmd:distributorContact/gmd:CI_ResponsibleParty/gmd:positionName/gco:CharacterString'
+      ignore_case: False  
+    #
+
+    ###############################
+    ## Point of Contact
+    ###############################
+    # Email
+    24:                                  # The order the text replacements are to occur
+                                       # DONT NOT DUPLICATE NUMBERS. !!!
+                                       # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+      search: '^(?!lris@landcareresearch\.co\.nz$).+'                     # The text to search for replacement.
+                                       # !!! Must be in Python Reg Exp format!
+                                       # If proving a "target_element" The RegEx can be .*   +64 6 353 4953
+      replace: 'lris@landcareresearch.co.nz' # The the text to replace the search text
+      target_element:  './gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:electronicMailAddress/gco:CharacterString'
+      ignore_case: False                # True or False. If True, search text case is ignored 
+    # City
+    25:                                  # The order the text replacements are to occur
+                                       # DONT NOT DUPLICATE NUMBERS. !!!
+                                       # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+      search: '^(?!Lincoln$).+'                     # The text to search for replacement.
+                                       # !!! Must be in Python Reg Exp format!
+                                       # If proving a "target_element" The RegEx can be .*   +64 6 353 4953
+      replace: 'Lincoln' # The the text to replace the search text
+      target_element:  './gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:city/gco:CharacterString'
+      ignore_case: False                # True or False. If True, search text case is ignored 
+    26:                                  # The order the text replacements are to occur
+                                       # DONT NOT DUPLICATE NUMBERS. !!!
+                                       # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+      search: '^(?!Canterbury$).+'                     # The text to search for replacement.
+                                       # !!! Must be in Python Reg Exp format!
+                                       # If proving a "target_element" The RegEx can be .*   +64 6 353 4953
+      replace: 'Canterbury' # The the text to replace the search text
+      target_element:  './gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:administrativeArea/gco:CharacterString'
+      ignore_case: False  
+    # Post Code    
+    27:                                  # The order the text replacements are to occur
+                                       # DONT NOT DUPLICATE NUMBERS. !!!
+                                       # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+      search: '^(?!7640$).+'                     # The text to search for replacement.
+                                       # !!! Must be in Python Reg Exp format!
+                                       # If proving a "target_element" The RegEx can be .*   +64 6 353 4953
+      replace: '7640' # The the text to replace the search text
+      target_element:  './gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:postalCode/gco:CharacterString'
+      ignore_case: False                # True or False. If True, search text case is ignored 
+    28:                                  # The order the text replacements are to occur
+                                       # DONT NOT DUPLICATE NUMBERS. !!!
+                                       # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+      search: 'NZ|\.N\.Z|New Zealand'
+      
+                       # The text to search for replacement.
+                                       # !!! Must be in Python Reg Exp format!
+                                       # If proving a "target_element" The RegEx can be .*
+      replace: Null #'^(?!\+64\s6\s353\s4953$).+'#'<gmd:Country codeList="http://www.iso.org/iso/country_codes/iso_3166_code_lists.htm" codeSpace="ISO3166-1" codeListValue="NZ">NZ</gmd:Country>'          # The the text to replace the search text
+      target_element: './gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:country/gco:CharacterString'
+      ignore_case: True
+      create_if_not_exists: False
+      replace_entry: True # Target must be set
+      name_space:  'gmd'
+      code_list: "http://www.iso.org/iso/country_codes/iso_3166_code_lists.html"   
+      code_space: "ISO3166-1"
+      code_list_value: "NZ"
+      new_tag: 'gmd:Country'    
+    # Role. come back to should be <gmd:CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeSpace="ISOTC211/19115" codeListValue="distributor">distributor</gmd:CI_RoleCode>
+    # 15:                                  # The order the text replacements are to occur
+    #                                     # DONT NOT DUPLICATE NUMBERS. !!!
+    #                                     # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+    #    search: '^(?!pointOfContact$).+'                     # The text to search for replacement.
+    #                                     # !!! Must be in Python Reg Exp format!
+    #                                     # If proving a "target_element" The RegEx can be .*   +64 6 353 4953
+    #    replace: 'pointOfContact' # The the text to replace the search text
+    #    target_element:  './gmd:contact/gmd:CI_ResponsibleParty/gmd:role/gmd:CI_RoleCode'
+    #    ignore_case: False  
+    
+    # Phone
+    29:                                  # The order the text replacements are to occur
+                                       # DONT NOT DUPLICATE NUMBERS. !!!
+                                       # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+      search: '^(?!\+64\s6\s353\s4953$).+'                     # The text to search for replacement.
+                                       # !!! Must be in Python Reg Exp format!
+                                       # If proving a "target_element" The RegEx can be .*   +64 6 353 4953
+      replace: '+64 6 353 4953' # The the text to replace the search text
+      target_element: './gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:phone/gmd:CI_Telephone/gmd:voice/gco:CharacterString'
+      ignore_case: False 
+    # Fax
+    30:                                  # The order the text replacements are to occur
+                                       # DONT NOT DUPLICATE NUMBERS. !!!
+                                       # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+      search: '^(?!Omit$).+'                     # The text to search for replacement.
+                                       # !!! Must be in Python Reg Exp format!
+                                       # If proving a "target_element" The RegEx can be .*   +64 6 353 4953
+      replace: 'Omit' # The the text to replace the search text
+      target_element:  './gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:phone/gmd:CI_Telephone/gmd:facsimile/gco:CharacterString'
+      ignore_case: False 
+    # Delivery Point
+    31:                                  # The order the text replacements are to occur
+                                       # DONT NOT DUPLICATE NUMBERS. !!!
+                                       # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+      search: '^(?!PO\sBox\s69040\,\sLincoln\s7640$).+'                     # The text to search for replacement.
+                                       # !!! Must be in Python Reg Exp format!
+                                       # If proving a "target_element" The RegEx can be .*   +64 6 353 4953
+      replace: 'PO Box 69040, Lincoln 7640' # The the text to replace the search text
+      target_element: './gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:deliveryPoint/gco:CharacterString'
+      ignore_case: False                                
+    # Org N?ame
+    32:                                  # The order the text replacements are to occur
+                                       # DONT NOT DUPLICATE NUMBERS. !!!
+                                       # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+      search: '^(?!Landcare Research NZ Ltd$).+'                    # The text to search for replacement.
+                                       # !!! Must be in Python Reg Exp format!
+                                       # If proving a "target_element" The RegEx can be .*
+      replace: 'Landcare Research NZ Ltd'             # The the text to replace the search text
+      target_element: './gmd:distributionInfo/gmd:MD_Distribution/gmd:distributor/gmd:MD_Distributor/gmd:distributorContact/gmd:CI_ResponsibleParty/gmd:organisationName/gco:CharacterString'
+      ignore_case: False    
+    # individualName
+    33:                                  # The order the text replacements are to occur
+                                       # DONT NOT DUPLICATE NUMBERS. !!!
+                                       # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+      search: '^(?!Omit$).+'                    # The text to search for replacement.
+                                       # !!! Must be in Python Reg Exp format!
+                                       # If proving a "target_element" The RegEx can be .*
+      replace: 'Omit'             # The the text to replace the search text
+      target_element: './gmd:distributionInfo/gmd:MD_Distribution/gmd:distributor/gmd:MD_Distributor/gmd:distributorContact/gmd:CI_ResponsibleParty/gmd:individualName/gco:CharacterString'
+      ignore_case: False    
+    # Position Name
+    34:                                  # The order the text replacements are to occur
+                                       # DONT NOT DUPLICATE NUMBERS. !!!
+                                       # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+      search: '^(?!Omit$).+'                    # The text to search for replacement.
+                                       # !!! Must be in Python Reg Exp format!
+                                       # If proving a "target_element" The RegEx can be .*
+      replace: 'Omit'             # The the text to replace the search text
+      target_element: './gmd:distributionInfo/gmd:MD_Distribution/gmd:distributor/gmd:MD_Distributor/gmd:distributorContact/gmd:CI_ResponsibleParty/gmd:positionName/gco:CharacterString'
+      ignore_case: False  
+    #
+    ###############################
+    ## Citation
+    ###############################
+    # Email
+    35:                                  # The order the text replacements are to occur
+                                       # DONT NOT DUPLICATE NUMBERS. !!!
+                                       # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+      search: '^(?!lris@landcareresearch\.co\.nz$).+'                     # The text to search for replacement.
+                                       # !!! Must be in Python Reg Exp format!
+                                       # If proving a "target_element" The RegEx can be .*   +64 6 353 4953
+      replace: 'lris@landcareresearch.co.nz' # The the text to replace the search text
+      target_element:  './gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:electronicMailAddress/gco:CharacterString'
+      ignore_case: False                # True or False. If True, search text case is ignored 
+    # City
+    36:                                  # The order the text replacements are to occur
+                                       # DONT NOT DUPLICATE NUMBERS. !!!
+                                       # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+      search: '^(?!Lincoln$).+'                     # The text to search for replacement.
+                                       # !!! Must be in Python Reg Exp format!
+                                       # If proving a "target_element" The RegEx can be .*   +64 6 353 4953
+      replace: 'Lincoln' # The the text to replace the search text
+      target_element:  './gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:city/gco:CharacterString'
+      ignore_case: False                # True or False. If True, search text case is ignored 
+    37:                                  # The order the text replacements are to occur
+                                       # DONT NOT DUPLICATE NUMBERS. !!!
+                                       # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+      search: '^(?!Canterbury$).+'                     # The text to search for replacement.
+                                       # !!! Must be in Python Reg Exp format!
+                                       # If proving a "target_element" The RegEx can be .*   +64 6 353 4953
+      replace: 'Canterbury' # The the text to replace the search text
+      target_element:  './gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:administrativeArea/gco:CharacterString'
+      ignore_case: False      
+    # Post Code    
+    38:                                  # The order the text replacements are to occur
+                                       # DONT NOT DUPLICATE NUMBERS. !!!
+                                       # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+      search: '^(?!7640$).+'                     # The text to search for replacement.
+                                       # !!! Must be in Python Reg Exp format!
+                                       # If proving a "target_element" The RegEx can be .*   +64 6 353 4953
+      replace: '7640' # The the text to replace the search text
+      target_element:  './gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:postalCode/gco:CharacterString'
+      ignore_case: False                # True or False. If True, search text case is ignored 
+    39:                                  # The order the text replacements are to occur
+                                       # DONT NOT DUPLICATE NUMBERS. !!!
+                                       # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+      search: 'NZ|\.N\.Z|New Zealand'
+      
+                       # The text to search for replacement.
+                                       # !!! Must be in Python Reg Exp format!
+                                       # If proving a "target_element" The RegEx can be .*
+      replace: Null #'^(?!\+64\s6\s353\s4953$).+'#'<gmd:Country codeList="http://www.iso.org/iso/country_codes/iso_3166_code_lists.htm" codeSpace="ISO3166-1" codeListValue="NZ">NZ</gmd:Country>'          # The the text to replace the search text
+      target_element: './gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:country/gco:CharacterString'
+      ignore_case: True
+      create_if_not_exists: False
+      replace_entry: True # Target must be set
+      name_space:  'gmd'
+      code_list: "http://www.iso.org/iso/country_codes/iso_3166_code_lists.html"   
+      code_space: "ISO3166-1"
+      code_list_value: "NZ"
+      new_tag: 'gmd:Country'
+
+    
+    # Role. come back to should be <gmd:CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeSpace="ISOTC211/19115" codeListValue="distributor">distributor</gmd:CI_RoleCode>
+    # 15:                                  # The order the text replacements are to occur
+    #                                     # DONT NOT DUPLICATE NUMBERS. !!!
+    #                                     # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+    #    search: '^(?!pointOfContact$).+'                     # The text to search for replacement.
+    #                                     # !!! Must be in Python Reg Exp format!
+    #                                     # If proving a "target_element" The RegEx can be .*   +64 6 353 4953
+    #    replace: 'pointOfContact' # The the text to replace the search text
+    #    target_element:  './gmd:contact/gmd:CI_ResponsibleParty/gmd:role/gmd:CI_RoleCode'
+    #    ignore_case: False  
+    
+    # Phone
+    40:                                  # The order the text replacements are to occur
+                                       # DONT NOT DUPLICATE NUMBERS. !!!
+                                       # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+      search: '^(?!\+64\s6\s353\s4953$).+'                     # The text to search for replacement.
+                                       # !!! Must be in Python Reg Exp format!
+                                       # If proving a "target_element" The RegEx can be .*   +64 6 353 4953
+      replace: '+64 6 353 4953' # The the text to replace the search text
+      target_element: './gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:phone/gmd:CI_Telephone/gmd:voice/gco:CharacterString'
+      ignore_case: False 
+    # Fax
+    41:                                  # The order the text replacements are to occur
+                                       # DONT NOT DUPLICATE NUMBERS. !!!
+                                       # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+      search: '^(?!Omit$).+'                     # The text to search for replacement.
+                                       # !!! Must be in Python Reg Exp format!
+                                       # If proving a "target_element" The RegEx can be .*   +64 6 353 4953
+      replace: 'Omit' # The the text to replace the search text
+      target_element:  './gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:phone/gmd:CI_Telephone/gmd:facsimile/gco:CharacterString'
+      ignore_case: False 
+    # Delivery Point
+    42:                                  # The order the text replacements are to occur
+                                       # DONT NOT DUPLICATE NUMBERS. !!!
+                                       # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+      search: '^(?!PO\sBox\s69040\,\sLincoln\s7640$).+'                     # The text to search for replacement.
+                                       # !!! Must be in Python Reg Exp format!
+                                       # If proving a "target_element" The RegEx can be .*   +64 6 353 4953
+      replace: 'PO Box 69040, Lincoln 7640' # The the text to replace the search text
+      target_element: './gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:deliveryPoint/gco:CharacterString'
+      ignore_case: False                                
+    # Org Name
+    43:                                  # The order the text replacements are to occur
+                                       # DONT NOT DUPLICATE NUMBERS. !!!
+                                       # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+      search: '^(?!Landcare Research NZ Ltd$).+'                    # The text to search for replacement.
+                                       # !!! Must be in Python Reg Exp format!
+                                       # If proving a "target_element" The RegEx can be .*
+      replace: 'Landcare Research NZ Ltd'             # The the text to replace the search text
+      target_element: './gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty/gmd:organisationName/gco:CharacterString'
+      ignore_case: False    
+    # individualName
+    44:                                  # The order the text replacements are to occur
+                                       # DONT NOT DUPLICATE NUMBERS. !!!
+                                       # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+      search: '^(?!Omit$).+'                    # The text to search for replacement.
+                                       # !!! Must be in Python Reg Exp format!
+                                       # If proving a "target_element" The RegEx can be .*
+      replace: 'Omit'             # The the text to replace the search text
+      target_element: './gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty/gmd:individualName/gco:CharacterString'
+      ignore_case: False    
+    # Position Name
+    45:                                  # The order the text replacements are to occur
+                                       # DONT NOT DUPLICATE NUMBERS. !!!
+                                       # ENUSRE SEQUENTIAL STARTING AT 1 !!!
+      search: '^(?!Omit$).+'                    # The text to search for replacement.
+                                       # !!! Must be in Python Reg Exp format!
+                                       # If proving a "target_element" The RegEx can be .*
+      replace: 'Omit'             # The the text to replace the search text
+      target_element: './gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty/gmd:positionName/gco:CharacterString'
+      ignore_case: False  
+
+    46:                                  # Ensure unique numbering continues sequentially
+      search: 'eng|en'
+      replace: Null  # Language replacement structure to be applied
+      target_element: './gmd:language/gco:CharacterString'
+      ignore_case: True
+      create_if_not_exists: False
+      replace_entry: True
+      name_space: 'gmd'
+      code_list: "http://www.loc.gov/standards/iso639-2/php/code_list.php"
+      code_space: "ISO639-2"
+      code_list_value: "eng"
+      new_tag: 'gmd:LanguageCode'
+
+
+
+Output:
+  Destination: /home/planzers/projects/koordinates_api/metadata_updater/prod/finetune_1     # The directory where to write 
+                                       # metadata file backups
+
+Datasets:
+  Layers: ['104400'] #, '105725', '48079', '48165', '48416', '107397', '107284', '48176', '48125', '48314', '48098', '114743', '48366', '48404', '95062', '119684', '48111', '48211', '105706', '107409', '119621', '107406', '119848', '48402', '119626', '105710', '48258', '107410', '118946', '97293', '48234', '105792', '48247', '48226', '106955', '48233', '48259', '48239', '93627', '103824', '103540', '48570', '90851', '95077', '95751', '95825', '103260', '103811', '103886', '104456', '104761', '104922', '105114', '105612', '107302', '107310', '107320', '108934', '95334', '105602', '105985', '106317', '48291', '48354', '48362', '48386', '48397', '48488']
+                                       # All will process All Tables and Layers 
+                                       # e.g. [93639,93648, 93649] or "All"
+  #Sets:                                 # Sets are not currently supported
+  #Docs:                                 # Documents are not currently supported 
+
+Test:
+  Dry_run: False                     # True or False
+                                       # If True, metadata xml documents are
+                                       # edited and stored but no changes to the
+                                       # Data Service made 
+  Overwrite_files: True                 # True or Flase
+                                       # Useful dev and testing. When True
+                                       # metadata files that are already in 
+                                       # the destination dir will be over-written
+Summarise: 
+  Summarise_metadata: True
+  

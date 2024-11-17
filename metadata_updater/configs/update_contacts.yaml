@@ -1,0 +1,245 @@
+---
+# <gco:CharacterString>eng<> >>> <gmd:LanguageCode codeList="http://www.loc.gov/standards/iso639-2/php/code_list.php" codeSpace="ISO639-2" codeListValue="eng">eng</gmd:LanguageCode>'
+
+
+Connection:
+  Api_key: <API KEY>            # Not Recommended. Should be stored as envi var
+  Domain:  lris.scinfo.org.nz                          # e.g. lris.scinfo.org.nz
+
+
+Text:
+# Country Lists
+  Mapping:                               
+    1:                                  # The order the text replacements are to occur
+      target_element: './gmd:contact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:country'
+      action: overwrite_element_code_list
+      name_space:  'gmd'
+      code_list: "http://www.iso.org/iso/country_codes/iso_3166_code_lists.html"   
+      code_space: "ISO3166-1"
+      code_list_value: "NZ"
+      new_tag: 'gmd:Country'
+    2:                                  # The order the text replacements are to occur
+      target_element: './gmd:distributionInfo/gmd:MD_Distribution/gmd:distributor/gmd:MD_Distributor/gmd:distributorContact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:country'
+      action: overwrite_element_code_list
+      name_space:  'gmd'
+      code_list: "http://www.iso.org/iso/country_codes/iso_3166_code_lists.html"   
+      code_space: "ISO3166-1"
+      code_list_value: "NZ"
+      new_tag: 'gmd:Country'
+    3:                                  # The order the text replacements are to occur
+      target_element: './gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:country'
+      action: overwrite_element_code_list
+      name_space:  'gmd'
+      code_list: "http://www.iso.org/iso/country_codes/iso_3166_code_lists.html"   
+      code_space: "ISO3166-1"
+      code_list_value: "NZ"
+      new_tag: 'gmd:Country'
+    4:                                  # The order the text replacements are to occur
+      target_element: './gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:country'
+      action: overwrite_element_code_list
+      name_space:  'gmd'
+      code_list: "http://www.iso.org/iso/country_codes/iso_3166_code_lists.html"   
+      code_space: "ISO3166-1"
+      code_list_value: "NZ"
+      new_tag: 'gmd:Country'
+# Individual: 
+
+    5:                                 
+      target_element: './gmd:contact/gmd:CI_ResponsibleParty/gmd:individualName'
+      action: overwrite_element_str
+      new_value: 'Omit' 
+    6:                                 
+      target_element: './gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty/gmd:individualName'
+      action: overwrite_element_str
+      new_value: 'Omit' 
+    7:                                 
+      target_element: './gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty/gmd:individualName'
+      action: overwrite_element_str
+      new_value: 'Omit' 
+    8:                                 
+      target_element: './gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty/gmd:individualName'
+      action: overwrite_element_str
+      new_value: 'Omit' 
+#orgname
+
+    9:                                 
+      target_element: './gmd:contact/gmd:CI_ResponsibleParty/gmd:organisationName'
+      action: overwrite_element_str
+      new_value: 'Landcare Research NZ Ltd'
+    10:                                 
+      target_element: './gmd:distributionInfo/gmd:MD_Distribution/gmd:distributor/gmd:MD_Distributor/gmd:distributorContact/gmd:CI_ResponsibleParty/gmd:organisationName'
+      action: overwrite_element_str
+      new_value: 'Landcare Research NZ Ltd'
+    11:                                 
+      target_element: './gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty/gmd:organisationName'
+      action: overwrite_element_str
+      new_value: 'Landcare Research NZ Ltd'
+    12:                                 
+      target_element: './gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty/gmd:organisationName'
+      action: overwrite_element_str
+      new_value: 'Landcare Research NZ Ltd'
+    13:                                 
+      target_element: './gmd:contact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:city'
+      action: overwrite_element_str
+      new_value: 'Lincoln' 
+    14:                                 
+      target_element: './gmd:distributionInfo/gmd:MD_Distribution/gmd:distributor/gmd:MD_Distributor/gmd:distributorContact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:city'
+      action: overwrite_element_str
+      new_value: 'Lincoln' 
+    15:                                 
+      target_element: './gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:city'
+      action: overwrite_element_str
+      new_value: 'Lincoln' 
+    16:                                 
+      target_element: './gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:city'
+      action: overwrite_element_str
+      new_value: 'Lincoln' 
+
+    17:                                 
+      target_element: './gmd:contact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:administrativeArea'
+      action: overwrite_element_str
+      new_value: 'Canterbury' 
+    18:                                 
+      target_element: './gmd:distributionInfo/gmd:MD_Distribution/gmd:distributor/gmd:MD_Distributor/gmd:distributorContact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:administrativeArea'
+      action: overwrite_element_str
+      new_value: 'Canterbury' 
+    19:                                 
+      target_element: './gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:administrativeArea'
+      action: overwrite_element_str
+      new_value: 'Canterbury' 
+    20:                                 
+      target_element: './gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:administrativeArea'
+      action: overwrite_element_str
+      new_value: 'Canterbury' 
+
+    21:                                 
+      target_element: './gmd:contact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:postalCode'
+      action: overwrite_element_str
+      new_value: '7640' 
+    22:                                 
+      target_element: './gmd:distributionInfo/gmd:MD_Distribution/gmd:distributor/gmd:MD_Distributor/gmd:distributorContact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:postalCode'
+      action: overwrite_element_str
+      new_value: '7640' 
+    23:                                 
+      target_element: './gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:postalCode'
+      action: overwrite_element_str
+      new_value: '7640' 
+    24:                                 
+      target_element: './gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:postalCode'
+      action: overwrite_element_str
+      new_value: '7640' 
+
+    25:                                 
+      target_element: './gmd:contact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:phone/gmd:CI_Telephone/gmd:voice'
+      action: overwrite_element_str
+      new_value: '+64 6 353 4953' 
+    26:                                 
+      target_element: './gmd:distributionInfo/gmd:MD_Distribution/gmd:distributor/gmd:MD_Distributor/gmd:distributorContact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:phone/gmd:CI_Telephone/gmd:voice'
+      action: overwrite_element_str
+      new_value: '+64 6 353 4953' 
+    27:                                 
+      target_element: './gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:phone/gmd:CI_Telephone/gmd:voice'
+      action: overwrite_element_str
+      new_value: '+64 6 353 4953' 
+    28:                                 
+      target_element: './gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:phone/gmd:CI_Telephone/gmd:voice'
+      action: overwrite_element_str
+      new_value: '+64 6 353 4953' 
+
+    29:                                 
+      target_element: './gmd:contact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:phone/gmd:CI_Telephone/gmd:facsimile'
+      action: overwrite_element_str
+      new_value: 'Omit' 
+    30:                                 
+      target_element: './gmd:distributionInfo/gmd:MD_Distribution/gmd:distributor/gmd:MD_Distributor/gmd:distributorContact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:phone/gmd:CI_Telephone/gmd:facsimile'
+      action: overwrite_element_str
+      new_value: 'Omit' 
+    31:                                 
+      target_element: './gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:phone/gmd:CI_Telephone/gmd:facsimile'
+      action: overwrite_element_str
+      new_value: 'Omit' 
+    32:                                 
+      target_element: './gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:phone/gmd:CI_Telephone/gmd:facsimile'
+      action: overwrite_element_str
+      new_value: 'Omit' 
+
+    33:                                 
+      target_element: './gmd:contact/gmd:CI_ResponsibleParty/gmd:positionName'
+      action: overwrite_element_str
+      new_value: 'Omit' 
+    34:                                 
+      target_element: './gmd:distributionInfo/gmd:MD_Distribution/gmd:distributor/gmd:MD_Distributor/gmd:distributorContact/gmd:CI_ResponsibleParty/gmd:positionName'
+      action: overwrite_element_str
+      new_value: 'Omit' 
+    35:                                 
+      target_element: './gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty/gmd:positionName'
+      action: overwrite_element_str
+      new_value: 'Omit' 
+    36:                                 
+      target_element: './gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty/gmd:positionName'
+      action: overwrite_element_str
+      new_value: 'Omit' 
+    37:                                  # The order the text replacements are to occur
+      target_element:  './gmd:language'
+      action: overwrite_element_code_list
+      name_space:  'gmd'
+      code_list: "http://www.loc.gov/standards/iso639-2/php/code_list.php"
+      code_space: "ISO639-2"
+      code_list_value: "eng"
+      new_tag: 'gmd:LanguageCode'
+    38:                                 
+      target_element: './gmd:contact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:electronicMailAddress'
+      action: overwrite_element_str
+      new_value: 'lris@landcareresearch.co.nz'
+    39:                                 
+      target_element: './gmd:distributionInfo/gmd:MD_Distribution/gmd:distributor/gmd:MD_Distributor/gmd:distributorContact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:electronicMailAddress'
+      action: overwrite_element_str
+      new_value: 'lris@landcareresearch.co.nz'
+    40:                                 
+      target_element: './gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:electronicMailAddress'
+      action: overwrite_element_str
+      new_value: 'lris@landcareresearch.co.nz'
+    41:                                 
+      target_element: './gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:electronicMailAddress'
+      action: overwrite_element_str
+      new_value: 'lris@landcareresearch.co.nz'
+
+    42:
+      target_element: './gmd:contact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:deliveryPoint'
+      action: overwrite_element_str
+      new_value: 'PO Box 69040, Lincoln 7640'
+    43:
+      target_element: './gmd:distributionInfo/gmd:MD_Distribution/gmd:distributor/gmd:MD_Distributor/gmd:distributorContact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:deliveryPoint'
+      action: overwrite_element_str
+      new_value: 'PO Box 69040, Lincoln 7640'
+    44:
+      target_element: './gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:deliveryPoint'
+      action: overwrite_element_str
+      new_value: 'PO Box 69040, Lincoln 7640'
+    45:
+      target_element: './gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:citedResponsibleParty/gmd:CI_ResponsibleParty/gmd:contactInfo/gmd:CI_Contact/gmd:address/gmd:CI_Address/gmd:deliveryPoint'
+      action: overwrite_element_str
+      new_value: 'PO Box 69040, Lincoln 7640'
+Output:
+  Destination: /home/planzers/projects/koordinates_api/metadata_updater/prod/brute_mon          # The directory where to write 
+                                        # metadata file backups
+
+Datasets:
+  Layers: [48431, 105202, 48365, 48387, 48361, 48389, 48386, 48436, 95355, 120773, 105688]
+                                        # All will process All Tables and Layers 
+                                        # e.g. [93639,93648, 93649] or "All"
+  Sets:                                 # Sets are not currently supported
+  Docs:                                 # Documents are not currently supported 
+
+Test:
+  Dry_run: False                         # True or False
+                                        # If True, metadata xml documents are
+                                        # edited and stored but no changes to the
+                                        # Data Service made 
+  Overwrite_files: True                 # True or Flase
+                                        # Useful dev and testing. When True
+                                        # metadata files that are already in 
+                                        # the destination dir will be over-written
+Summarise: 
+  Summarise_metadata: True
+  

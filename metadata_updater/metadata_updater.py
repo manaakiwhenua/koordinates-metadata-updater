@@ -22,7 +22,9 @@ import logging
 import shutil
 import argparse
 import _locale
+import hashlib
 from lxml import etree as ET
+from xml.dom.minidom import parse, parseString
 
 from .utils.xml_to_excel import parse_xml_file, write_to_excel, record_missing_metadata
 
@@ -40,10 +42,13 @@ ERRORS = 0
 NAMESPACES = {
     'gmd': 'http://www.isotc211.org/2005/gmd',
     'gco': 'http://www.isotc211.org/2005/gco',
-    'srv': 'http://www.isotc211.org/2005/srv',
-    'gml': 'http://www.opengis.net/gml',
-    'xlink': 'http://www.w3.org/1999/xlink'
+    #'srv': 'http://www.isotc211.org/2005/srv',
+    #'gml': 'http://www.opengis.net/gml',
+    #'xlink': 'http://www.w3.org/1999/xlink'
 }
+
+for prefix, uri in NAMESPACES.items():
+    ET.register_namespace(prefix, uri)
 
 class ConfigReader():
     """
@@ -166,7 +171,23 @@ def get_metadata(layer, dir, overwrite):
         logger.critical(f"Failed to get XML for layer with ID {layer.id}: {str(e)}")
         ERRORS += 1
         return None
+
+    # The koordiantes get_xml method dumps the 
+    # xml as a single line :(
+    # this the below
+    with open(file_destination, 'r') as file:
+        xml_content = file.read()
+
+    # Parse and pretty print the XML
+    xml_dom = parseString(xml_content)
+    pretty_xml_as_string = xml_dom.toprettyxml()
+
+    # Write the pretty-printed XML back to a file
+    with open(file_destination, 'w') as file:
+        file.write(pretty_xml_as_string)
+    
     return file_destination
+
 
 
 def update_metadata(dest_file, mapping):
@@ -174,10 +195,6 @@ def update_metadata(dest_file, mapping):
     Update the metadata file. If target_element is not None in the
     config it will do this only targeting said XML element. Else, 
     a regex find and replace will be performed across the entire file.
-
-    Note, if using target_element regex ".*" can be used to replace
-    all values of an xml element. It is not safe to use this for the
-    when not using target_element and targeting the entire file
     """
     tree = ET.parse(dest_file)
     root = tree.getroot()
@@ -188,9 +205,59 @@ def update_metadata(dest_file, mapping):
     search_text = mapping['search']
     replace_text = mapping['replace']
     ignore_case = mapping['ignore_case']
+    replace_entry = mapping.get('replace_entry')
+    name_space = mapping.get('name_space')
+    code_list = mapping.get('code_list')
+    code_space = mapping.get('code_space')
+    code_list_value = mapping.get('code_list_value')
+    new_tag = mapping.get('new_tag')
+    # Check if `search_text` contains capture groups (i.e., parentheses)
+    has_capture_group = re.search(r'\((?!\?:|\?!|\?<=|\?<!).+?\)', search_text) is not None
+        
+    # Define a replacement function if capture groups are used
+    def wrap_with_character_string(match):
+        return f"<gmd:useLimitation>\n  <gco:CharacterString>{match.group(1)}</gco:CharacterString>\n</gmd:useLimitation>"
 
-    if file_has_text(search_text, ignore_case, dest_file, target_element):
-        if target_element:
+
+
+    
+
+    if file_has_text(search_text, ignore_case, dest_file, target_element) or replace_entry:
+
+ 
+        # If target_element is provided, target the specified XML element
+        if target_element and replace_entry:
+            # Find the target element, e.g., gco:CharacterString
+            target_element_obj = root.find(target_element, namespaces)
+            
+            if target_element_obj is not None:
+                # Get the parent element (e.g., gmd:country)
+                parent_element = target_element_obj.getparent()
+
+                if parent_element is not None:
+                    # Remove the existing gco:CharacterString element
+                    parent_element.remove(target_element_obj)
+
+                    # Set up attributes for the new element
+                    attributes = {}
+                    if code_list:
+                        attributes['code_list'] = code_list
+                    if code_space:
+                        attributes['code_space'] = code_space
+                    if code_list_value:
+                        attributes['code_list_value'] = code_list_value
+
+                    # Create the new element with specified tag and attributes
+                    new_element = ET.SubElement(parent_element, f'{{{namespaces["gmd"]}}}{new_tag.split(":")[1]}', attrib=attributes)
+                    new_element.text = code_list_value
+
+                    print(f"Replacement successful for {new_tag}.")
+                else:
+                    print("No parent element found for the target element.")
+            else:
+                print(f"Target element not found: {target_element}")
+
+        elif target_element:
             # Target specific elements in the XML
             elements = root.findall(target_element, namespaces)
             for element in elements:
@@ -200,16 +267,26 @@ def update_metadata(dest_file, mapping):
                     else:
                         search_pattern = re.compile(search_text, flags=re.DOTALL)
                     
-                    # Ensure replacement is done only once
-                    element.text = re.sub(search_pattern, replace_text, element.text, count=1)
+                    # Use `wrap_with_character_string` for capture groups; otherwise, direct replace_text
+                    if has_capture_group:
+                        element.text = re.sub(search_pattern, wrap_with_character_string, element.text)
+                    else:
+                        element.text = re.sub(search_pattern, replace_text, element.text)
         else:
-            # Perform a generic find and replace
+            # Perform a generic find and replace in the entire file
             with fileinput.FileInput(dest_file, inplace=True) as file:
                 for line in file:
                     if ignore_case:
-                        line = re.sub(search_text, replace_text, line.rstrip(), flags=re.IGNORECASE)
+                        search_pattern = re.compile(search_text, flags=re.IGNORECASE)
                     else:
-                        line = re.sub(search_text, replace_text, line.rstrip())
+                        search_pattern = re.compile(search_text)
+
+                    # Use `wrap_with_character_string` if capture group exists; otherwise, replace_text
+                    if has_capture_group:
+                        line = re.sub(search_pattern, wrap_with_character_string, line.rstrip())
+                    else:
+                        line = re.sub(search_pattern, replace_text, line.rstrip())
+                    
                     print(line)
             return
 
@@ -218,7 +295,59 @@ def update_metadata(dest_file, mapping):
         if prefix:  # Skip empty prefixes
             ET.register_namespace(prefix, uri)
 
-    tree.write(dest_file, encoding='utf-8', xml_declaration=True, pretty_print=True)
+    tree.write(dest_file, encoding='utf-8', xml_declaration=True)
+
+
+# def update_metadata(dest_file, mapping):
+#     """
+#     Update the metadata file. If target_element is not None in the
+#     config it will do this only targeting said XML element. Else, 
+#     a regex find and replace will be performed across the entire file.
+
+#     Note, if using target_element regex ".*" can be used to replace
+#     all values of an xml element. It is not safe to use this for the
+#     when not using target_element and targeting the entire file
+#     """
+#     tree = ET.parse(dest_file)
+#     root = tree.getroot()
+    
+#     # Extract namespaces and create a namespace dictionary
+#     namespaces = {node[0]: node[1] for _, node in ET.iterparse(dest_file, events=['start-ns'])}
+#     target_element = mapping.get('target_element')
+#     search_text = mapping['search']
+#     replace_text = mapping['replace']
+#     ignore_case = mapping['ignore_case']
+
+#     if file_has_text(search_text, ignore_case, dest_file, target_element):
+#         if target_element:
+#             # Target specific elements in the XML
+#             elements = root.findall(target_element, namespaces)
+#             for element in elements:
+#                 if element is not None and element.text:
+#                     if ignore_case:
+#                         search_pattern = re.compile(search_text, flags=re.IGNORECASE | re.DOTALL)
+#                     else:
+#                         search_pattern = re.compile(search_text, flags=re.DOTALL)
+                    
+#                     # Ensure replacement is done only once
+#                     element.text = re.sub(search_pattern, replace_text, element.text, count=1)
+#         else:
+#             # Perform a generic find and replace
+#             with fileinput.FileInput(dest_file, inplace=True) as file:
+#                 for line in file:
+#                     if ignore_case:
+#                         line = re.sub(search_text, replace_text, line.rstrip(), flags=re.IGNORECASE)
+#                     else:
+#                         line = re.sub(search_text, replace_text, line.rstrip())
+#                     print(line)
+#             return
+
+#     # Register namespaces to ensure correct prefixes
+#     for prefix, uri in namespaces.items():
+#         if prefix:  # Skip empty prefixes
+#             ET.register_namespace(prefix, uri)
+
+#     tree.write(dest_file, encoding='utf-8', xml_declaration=True, pretty_print=True)
 
 
 def set_metadata(layer, file, publisher):
@@ -383,14 +512,14 @@ def iterate_selective(layers):
     for layer_id in layers:
         yield layer_id
 
-def file_has_text(search_text, ignore_case, file):
-    """
-    Test for the search text in the file...
-    Because there is no point updating and posting a file
-    if there are no changes to be made.
-    """
+# def file_has_text(search_text, ignore_case, file):
+#     """
+#     Test for the search text in the file...
+#     Because there is no point updating and posting a file
+#     if there are no changes to be made.
+#    """
 
-def file_has_text(search_text, ignore_case, file, target_element=None):
+def file_has_text(search_text, ignore_case, file,  target_element=None):
     """
     Test for the search text in the file or within a specified XML element.
     Because there is no point updating and posting a file
@@ -406,6 +535,8 @@ def file_has_text(search_text, ignore_case, file, target_element=None):
             flags = re.IGNORECASE if ignore_case else 0
             if re.search(search_text, element.text, flags=flags):
                 return True
+        elif not element: # if the element is there but is none, populate it
+            return True
         return False
     else:
         # Generic text search in the file
@@ -419,14 +550,223 @@ def file_has_text(search_text, ignore_case, file, target_element=None):
                     return True
             return False
 
+def element_is_present(file, element):
+    tree = ET.parse(file)
+    root = tree.getroot()
+    namespaces = {
+        'gmd': 'http://www.isotc211.org/2005/gmd',
+        'gco': 'http://www.isotc211.org/2005/gco'   
+    }
+
+    # Search for the element using the specified path
+    element_result = root.find(element, namespaces)
+
+    if element_result is None:
+        return False
+    return True
+
+
+
+def add_element(file, element_path, new_text=""):
+    # Parse the XML file
+    tree = ET.parse(file)
+    root = tree.getroot()
+
+    # Split the element path and filter out any initial "."
+    path_parts = [part for part in element_path.split('/') if part and part != "."]
+    parent = root
+
+    for part in path_parts:
+        # Parse the namespace and tag
+        if ':' in part:
+            namespace, tag = part.split(':')
+            full_tag = f"{{{NAMESPACES.get(namespace, '')}}}{tag}"
+        else:
+            full_tag = part  # Use tag directly if no namespace is provided
+
+        # Check for valid tag
+        if not full_tag.strip():
+            raise ValueError("Invalid tag or namespace in path")
+
+        # Find or create the element
+        next_element = parent.find(full_tag, NAMESPACES)
+        if next_element is None:
+            next_element = ET.SubElement(parent, full_tag)
+        parent = next_element
+
+    # Set the text for the final element in the path
+    parent.text = new_text
+
+    # Save the updated XML back to the file
+    tree.write(file, encoding='utf-8', xml_declaration=True)
+
+
 def create_backup(file, overwrite=False):
     """
     Create backup of metadata file to be edited
     """
+    # Split the filename to insert `_BAK`
+    backup_file = file.replace('.iso.xml', '_BAK.iso.xml')
     if overwrite:
-        file_exists(file+'._bak')
+        file_exists(backup_file)
+    # Create a backup without altering the XML structure
+    shutil.copyfile(file, backup_file)
 
-    shutil.copyfile(file, file+'._bak')
+
+def get_tree_hash(tree):
+    """Generate a hash for the given XML tree."""
+    xml_string = ET.tostring(tree.getroot(), encoding='utf-8')
+    return hashlib.md5(xml_string).hexdigest()
+
+# def ensure_path_exists(root, path, namespaces):
+#     """Ensure that the entire path exists, creating any missing elements."""
+#     elements = path.strip('./').split('/')
+#     current_element = root
+#     for elem in elements:
+#         ns_prefix, tag = elem.split(':')
+#         full_tag = f'{{{namespaces[ns_prefix]}}}{tag}'
+#         next_element = current_element.find(full_tag)
+        
+#         if next_element is None:
+#             # Create the missing element if it doesn't exist
+#             next_element = ET.SubElement(current_element, full_tag)
+#         current_element = next_element  # Move down to the next level
+#     return current_element
+
+def wrap_use_limitation_with_character_string(tree, namespaces):
+    # Find all gmd:useLimitation elements
+    for use_limitation in tree.findall('.//gmd:useLimitation', namespaces):
+        # Check if it contains direct text
+        if use_limitation.text and use_limitation.text.strip():
+            # Store the current text
+            text_content = use_limitation.text.strip()
+            use_limitation.text = None  # Clear the direct text
+
+            # Create a gco:CharacterString element and set its text
+            character_string = ET.SubElement(use_limitation, f"{{{namespaces['gco']}}}CharacterString")
+            character_string.text = text_content
+
+    return tree
+
+def delete_element(tree, target_path, namespaces):
+    """Delete an element specified by the target path if it exists."""
+    # Get the root of the tree
+    root = tree.getroot()
+    
+    # Find the parent path and the tag to delete
+    parent_path, tag_to_delete = target_path.rsplit('/', 1)
+    
+    # Ensure the parent element exists
+    parent_element = ensure_path_exists(root, parent_path, namespaces)
+    
+    # Define the full tag for the element to delete
+    ns_prefix, tag_name = tag_to_delete.split(':')
+    full_tag = f'{{{namespaces[ns_prefix]}}}{tag_name}'
+    
+    # Find and remove the target element if it exists
+    element_to_delete = parent_element.find(full_tag)
+    if element_to_delete is not None:
+        parent_element.remove(element_to_delete)
+    
+    return tree
+
+def ensure_path_exists(root, path, namespaces):
+    """Ensure that the entire path exists, creating any missing elements."""
+    elements = path.strip('./').split('/')
+    current_element = root
+
+    for elem in elements:
+        # Skip empty segments (if any)
+        if not elem:
+            continue
+
+        # Ensure the element contains a namespace prefix and tag
+        if ':' not in elem:
+            raise ValueError(f"Element '{elem}' does not have a namespace prefix.")
+        
+        ns_prefix, tag = elem.split(':', 1)  # Only split on the first occurrence of ':'
+        
+        # Check if the namespace prefix exists in the namespaces dictionary
+        if ns_prefix not in namespaces:
+            raise ValueError(f"Namespace prefix '{ns_prefix}' not found in namespaces dictionary.")
+        
+        full_tag = f'{{{namespaces[ns_prefix]}}}{tag}'
+        next_element = current_element.find(full_tag)
+        
+        if next_element is None:
+            # Create the missing element if it doesn't exist
+            next_element = ET.SubElement(current_element, full_tag)
+        
+        current_element = next_element  # Move down to the next level
+
+    return current_element
+
+
+def overwrite_element_value(tree, target_path, value, namespaces, tag_type='gco:CharacterString', attributes=None):
+    """Overwrite or create an element's value, supporting both gco:CharacterString and gmd:LanguageCode with attributes."""
+    # Ensure the full path exists up to the target element
+    target_element = ensure_path_exists(tree.getroot(), target_path, namespaces)
+    
+    # Clear all existing children of the target element
+    for child in list(target_element):
+        target_element.remove(child)
+    
+    # Determine the namespace and tag for the inner element (e.g., gco:CharacterString or gmd:LanguageCode)
+    ns_prefix, tag_name = tag_type.split(':')
+    full_tag = f'{{{namespaces[ns_prefix]}}}{tag_name}'
+    
+    # Create the specified tag element within the target element with optional attributes
+    if attributes and tag_type == 'gmd:LanguageCode':
+        inner_element = ET.SubElement(target_element, full_tag, attrib=attributes)
+    else:
+        inner_element = ET.SubElement(target_element, full_tag)
+    
+    # Set or overwrite the text in the inner element
+    inner_element.text = value
+    
+    return tree
+
+
+
+def overwrite_or_add_element_with_code_list(tree, target_path, new_tag, attributes, text_content, namespaces):
+    """
+    Overwrite an existing element with a new element using code list attributes if it exists,
+    or add it if missing. The wrapper element is inferred from the target_path.
+    """
+    # Extract the wrapper path and wrapper tag from the target path
+    wrapper_path, wrapper_tag = target_path.rsplit('/', 1)
+    parent_element = ensure_path_exists(tree.getroot(), wrapper_path, namespaces)
+
+    # Define the wrapper element (e.g., <gmd:country>)
+    ns_prefix, wrapper_name = wrapper_tag.split(':')
+    full_wrapper_tag = f'{{{namespaces[ns_prefix]}}}{wrapper_name}'
+
+    # Locate or create the wrapper element (e.g., <gmd:country>)
+    wrapper_element = parent_element.find(full_wrapper_tag)
+    if wrapper_element is None:
+        wrapper_element = ET.SubElement(parent_element, full_wrapper_tag)
+
+    # Clear any existing child elements within the wrapper element (e.g., remove <gco:CharacterString/>)
+    for child in list(wrapper_element):
+        wrapper_element.remove(child)
+
+    # Define the new inner element (e.g., <gmd:Country>)
+    ns_prefix, tag_name = new_tag.split(':')
+    full_tag = f'{{{namespaces[ns_prefix]}}}{tag_name}'
+
+    # Correct attribute names for code list standards
+    corrected_attributes = {
+        'codeList': attributes.get('code_list'),
+        'codeSpace': attributes.get('code_space'),
+        'codeListValue': attributes.get('code_list_value')
+    }
+
+    # Add the new <new_tag> (e.g., <gmd:Country>) inside the <wrapper_tag> (e.g., <gmd:country>)
+    new_element = ET.SubElement(wrapper_element, full_tag, attrib=corrected_attributes)
+    new_element.text = text_content
+
+    return tree
+
 
 def get_client(domain, api_key):
     """
@@ -530,17 +870,101 @@ def main():
             xml_data.append(data)
 
         # TEST IF SEARCH TEXT IN FILE (IN ORDER OF PRIORITY)
+
+        ### With changes in requirements this needs a re think. 
+        ## need function for each actions
+        ## Blanket overwrite of element
+        ## FInd and replace of element
+        ## Blanket overwrite of element code list
+
+        create_backup(file, config.test_overwrite)
+        tree = ET.parse(file)
+        initial_hash = get_tree_hash(tree)
+        tree = wrap_use_limitation_with_character_string(tree, NAMESPACES)
         text_found, backup_created = False, False
         for i in range(1,len(mapping)+1):
-            if file_has_text(mapping[i]['search'], mapping[i]['ignore_case'], file, mapping[i]['target_element']):
-                text_found = True
-                # Only creating a backup if the original is edited 
-                if not backup_created:
-                    create_backup(file, config.test_overwrite)
-                    backup_created = True
-                update_metadata(file, mapping[i])
+            ## The element is missing from the file
+            ## Leaving this out for now. Should create a flag to create element if does not exist
+            # if mapping[i]['target_element'] and not element_is_present(file,  mapping[i]['target_element']) and not  mapping[i].get('replace_entry',False) :
+            #     add_element(file,  mapping[i]['target_element'], mapping[i]['replace'])
+            #     text_found = True
+            
+            target_element = mapping[i].get("target_element")
 
-        if not text_found:
+            if mapping[i].get("action") == "overwrite_element_code_list":
+                code_list_value =  mapping[i].get("code_list_value")
+                attributes_code_list = {
+                    'code_list':  mapping[i].get("code_list"),
+                    'code_space':  mapping[i].get("code_space"),
+                    'code_list_value':  code_list_value
+                }
+                new_tag =  mapping[i].get("new_tag")
+                text_content_code_list = code_list_value
+
+                # Overwrite element with a code list
+                tree = overwrite_or_add_element_with_code_list(tree, 
+                                                                target_element, 
+                                                                new_tag, 
+                                                                attributes_code_list, 
+                                                                text_content_code_list, 
+                                                                NAMESPACES)
+
+                # tree = overwrite_element_with_code_list(tree, 
+                #                                 target_element, 
+                #                                 new_tag,
+                #                                 attributes_code_list,
+                #                                 text_content_code_list, 
+                #                                 NAMESPACES)
+            if mapping[i].get("action") == "overwrite_element_str":
+                new_value = mapping[i].get("new_value")
+                tree = overwrite_element_value(tree, 
+                                                target_element, 
+                                                new_value, 
+                                                NAMESPACES)
+        # HACK
+        delete_element(tree, './gmd:language/gco:CharacterString', NAMESPACES)
+        tree_edited = initial_hash != get_tree_hash(tree)
+        if tree_edited:
+            print("The XML tree has been modified.")
+            # Save the modified XML
+            for prefix, uri in NAMESPACES.items():
+                if prefix:  # Skip empty prefixes
+                    ET.register_namespace(prefix, uri)
+            tree.write(file, encoding='utf-8', xml_declaration=True)
+        else:
+            print("No changes were made to the XML tree.")
+
+
+
+    #         # Just over ride the element with out looking at it. 
+    #         # if mapping[i]['target_element'] and not element_is_present(file,  mapping[i]['target_element']) and mapping[i].get('code_list_value',False) :
+    #         #     create_code_list_element(file,mapping[i]['target_element'],  mapping)
+    #         #     text_found = True
+    #         # elif  file_has_text(mapping[i]['search'], mapping[i]['ignore_case'], file, mapping[i]['target_element']):
+    #         #     text_found = True
+    #         # # elif mapping[i].get('replace_entry',False):
+    #         # #     text_found = True
+    #         #     # Only creating a backup if the original is edited 
+    #         # if not backup_created and text_found:
+    #         #     create_backup(file, config.test_overwrite)
+    #         #     backup_created = True
+    #         #     update_metadata(file, mapping[i])
+
+
+
+        if not tree_edited:
+            # remove the file and only keep those that were modified 
+            base_dir = os.path.dirname(file)
+
+            # Define the path for the new directory 'not_modified' within the base directory
+            new_dir = os.path.join(base_dir, 'not_modified')
+
+            # Create the 'not_modified' directory only if it doesn't exist
+            os.makedirs(new_dir, exist_ok=True)
+
+            # Define the destination path and copy the file
+            new_file_path = os.path.join(new_dir, os.path.basename(file))
+            shutil.move(file, new_file_path)
             logger.info('Dataset {0}: Skipping, no changes to be made'. format(layer_id))
             continue
 

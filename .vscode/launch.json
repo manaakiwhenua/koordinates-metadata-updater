@@ -13,7 +13,10 @@
             "justMyCode": false,
             "args": [
                 "--config_file",
-                "/home/planzers/git/koordinates-metadata-updater/metadata_updater/config.yaml"
+                //"/home/planzers/git/koordinates-metadata-updater/metadata_updater/configs/1_phone_number.yaml"
+                //"/home/planzers/git/koordinates-metadata-updater/metadata_updater/configs/9999_dump_all.yaml",
+                //"/home/planzers/git/koordinates-metadata-updater/metadata_updater/configs/2_contacts.yaml"
+                "/home/planzers/git/koordinates-metadata-updater/metadata_updater/configs/2_brute_2.yaml"
             ]
         }
     ]
